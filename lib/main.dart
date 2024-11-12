@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:music_player/pages/home.dart';
+import 'package:music_player/pages/song_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,6 +19,11 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const HomePage(),
+      initialRoute: HomePage.route,
+      routes: {
+        SongPage.route: (ctx) => const SongPage()
+      }
+      ,
     );
   }
 }

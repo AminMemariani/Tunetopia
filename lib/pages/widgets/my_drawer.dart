@@ -11,7 +11,7 @@ class MyDrawer extends StatelessWidget {
       padding: EdgeInsets.zero,
       children: [
         Container(
-          height: 120,
+          height: 100,
           color: Colors.amber,
           child: const DrawerHeader(
             child: Text(""),

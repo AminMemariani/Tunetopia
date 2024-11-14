@@ -12,6 +12,13 @@ class SettingPage extends StatefulWidget {
 class _SettingPageState extends State<SettingPage> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.amber,
+        elevation: 0,
+        centerTitle: true,
+        title: const Text("Settings"),
+      ),
+    );
   }
 }

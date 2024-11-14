@@ -14,7 +14,21 @@ class HomeItem extends StatelessWidget {
           child: Container(
             alignment: Alignment.centerLeft,
             height: 100,
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.shade600,
+                    spreadRadius: 3,
+                    blurRadius: 7,
+                    offset: const Offset(0.5, 0.5),
+                  ),
+                  const BoxShadow(
+                    color: Colors.white,
+                    spreadRadius: 7,
+                    blurRadius: 3,
+                    offset: Offset(-0.5, -0.5),
+                  ),
+                ],
                 color: Color.fromARGB(255, 245, 245, 245),
                 borderRadius: BorderRadius.all(Radius.circular(10))),
             child: Row(

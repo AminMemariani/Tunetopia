@@ -5,7 +5,6 @@ import 'package:music_player/pages/widgets/controls.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class SongPage extends StatefulWidget {
-  static const String route = "songs";
   const SongPage({super.key});
 
   @override

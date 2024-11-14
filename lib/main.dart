@@ -17,16 +17,16 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.amber),
         useMaterial3: true,
       ),
       home: const HomePage(),
-      initialRoute: HomePage.route,
+      initialRoute: "home",
       routes: {
-        SongPage.route: (ctx) => const SongPage(),
-        SettingPage.route: (ctx) => const SettingPage()
-      }
-      ,
+        "home": (ctx) => const HomePage(),
+        "songs": (ctx) => const SongPage(),
+        "settings": (ctx) => const SettingPage()
+      },
     );
   }
 }

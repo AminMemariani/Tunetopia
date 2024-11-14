@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:music_player/pages/setting_page.dart';
 
 class MyDrawer extends StatelessWidget {
   const MyDrawer({super.key});
@@ -21,7 +20,7 @@ class MyDrawer extends StatelessWidget {
           title: const Text('Settings'),
           leading: const Icon(Icons.settings),
           onTap: () {
-            Navigator.of(context).pushNamed(SettingPage.route);
+            Navigator.of(context).pushNamed("settings");
           },
         ),
       ],

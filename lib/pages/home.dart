@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:music_player/pages/song_page.dart';
 import 'package:music_player/pages/widgets/my_drawer.dart';
 
 import '../widgets/home_item.dart';
 
 class HomePage extends StatefulWidget {
-  static const String route = "home";
   const HomePage({super.key});
 
   @override
@@ -25,7 +23,7 @@ class _HomePageState extends State<HomePage> {
       body: Padding(
           padding: const EdgeInsets.all(10),
           child: GestureDetector(
-              onTap: () => Navigator.pushNamed(context, SongPage.route),
+              onTap: () => Navigator.pushNamed(context, "songs"),
               child: HomeItem())),
     );
   }

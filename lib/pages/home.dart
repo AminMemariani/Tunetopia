@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:music_player/pages/song_page.dart';
 import 'package:music_player/widgets/home_item.dart';
+import 'package:music_player/widgets/my_drawer.dart';
 
 class HomePage extends StatefulWidget {
   static const String route = "home";
@@ -18,8 +20,12 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.amber,
         elevation: 0,
       ),
-      drawer: Drawer(),
-      body: Padding(padding: const EdgeInsets.all(10), child: HomeItem()),
+      drawer: const MyDrawer(),
+      body: Padding(
+          padding: const EdgeInsets.all(10),
+          child: GestureDetector(
+              onTap: () => Navigator.pushNamed(context, SongPage.route),
+              child: HomeItem())),
     );
   }
 }

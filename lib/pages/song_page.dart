@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:music_player/pages/widgets/controls.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class SongPage extends StatefulWidget {
@@ -54,9 +55,9 @@ class _SongPageState extends State<SongPage> {
               ),
             ),
           ),
-          Expanded(
-            child: Container(),
+          const Expanded(
             flex: 2,
+            child: Controls(),
           )
         ],
       ),

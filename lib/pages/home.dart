@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:music_player/pages/song_page.dart';
-import 'package:music_player/widgets/home_item.dart';
-import 'package:music_player/widgets/my_drawer.dart';
+import 'package:music_player/pages/widgets/my_drawer.dart';
+
+import '../widgets/home_item.dart';
 
 class HomePage extends StatefulWidget {
   static const String route = "home";

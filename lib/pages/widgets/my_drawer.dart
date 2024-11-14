@@ -10,9 +10,10 @@ class MyDrawer extends StatelessWidget {
         child: ListView(
       padding: EdgeInsets.zero,
       children: [
-        const SizedBox(
+        Container(
           height: 120,
-          child: DrawerHeader(
+          color: Colors.amber,
+          child: const DrawerHeader(
             child: Text(""),
           ),
         ),

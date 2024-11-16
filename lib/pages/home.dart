@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+
 import 'package:music_player/pages/widgets/my_drawer.dart';
 
-import '../widgets/home_item.dart';
+import 'widgets/home_item.dart';
+import '../constants/style.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,16 +17,12 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("FMP"),
+        title: MyStyles.appName,
         backgroundColor: Colors.amber,
         elevation: 0,
       ),
       drawer: const MyDrawer(),
-      body: Padding(
-          padding: const EdgeInsets.all(10),
-          child: GestureDetector(
-              onTap: () => Navigator.pushNamed(context, "songs"),
-              child: HomeItem())),
+      body: Padding(padding: const EdgeInsets.all(12), child: HomeItem()),
     );
   }
 }

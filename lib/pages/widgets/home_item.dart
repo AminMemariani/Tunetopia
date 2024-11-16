@@ -9,15 +9,15 @@ class HomeItem extends StatelessWidget {
     return ListView.builder(
       itemCount: items.length,
       itemBuilder: (BuildContext context, int index) {
-        return Padding(
-          padding: const EdgeInsets.all(8.0),
+        return GestureDetector(
+          onTap: () => Navigator.pushNamed(context, "songs"),
           child: Container(
             alignment: Alignment.centerLeft,
-            height: 100,
+            height: 50,
             decoration: BoxDecoration(
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.shade600,
+                    color: Colors.grey.shade50,
                     spreadRadius: 3,
                     blurRadius: 7,
                     offset: const Offset(0.5, 0.5),
@@ -29,19 +29,21 @@ class HomeItem extends StatelessWidget {
                     offset: Offset(-0.5, -0.5),
                   ),
                 ],
-                color: Color.fromARGB(255, 245, 245, 245),
-                borderRadius: BorderRadius.all(Radius.circular(10))),
+                color: const Color.fromARGB(255, 245, 245, 245),
+                borderRadius: const BorderRadius.all(Radius.circular(10))),
             child: Row(
               children: [
                 Container(
-                  width: 80,
+                  width: 15,
                   height: 80,
                   decoration: const BoxDecoration(
                       color: Colors.transparent,
                       borderRadius: BorderRadius.all(Radius.circular(10))),
                 ),
-                const SizedBox(width: 20),
-                Text(items[index]),
+                Text(
+                  items[index],
+                  
+                ),
               ],
             ),
           ),

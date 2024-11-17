@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:music_player/constants/style.dart';
 
 class HomeItem extends StatelessWidget {
   HomeItem({super.key});
@@ -42,7 +43,7 @@ class HomeItem extends StatelessWidget {
                 ),
                 Text(
                   items[index],
-                  
+                  style: MyStyles.appTextStyle,
                 ),
               ],
             ),

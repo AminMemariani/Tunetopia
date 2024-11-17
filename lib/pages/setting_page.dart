@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../constants/style.dart';
+
 class SettingPage extends StatefulWidget {
 
   const SettingPage({super.key});
@@ -16,7 +18,7 @@ class _SettingPageState extends State<SettingPage> {
         backgroundColor: Colors.amber,
         elevation: 0,
         centerTitle: true,
-        title: const Text("Settings"),
+        title: const Text("Settings" , style: MyStyles.appTextStyle),
       ),
     );
   }

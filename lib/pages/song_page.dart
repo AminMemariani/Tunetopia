@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:music_player/pages/widgets/controls.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../constants/style.dart';
+
 class SongPage extends StatefulWidget {
   const SongPage({super.key});
 
@@ -39,19 +41,19 @@ class _SongPageState extends State<SongPage> {
           elevation: 0,
           backgroundColor: Colors.amber,
           centerTitle: true,
-          title: const Text("Song Name")),
+          title: const Text("Song Name", style: MyStyles.appTextStyle)),
       body: Column(
         children: [
           Expanded(
             flex: 7,
             child: Container(
               decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(
-                      'assets/cover_image.png'), // Add your cover image here
+/*                 image: DecorationImage(
+                  image:  AssetImage(
+                      'assets/cover_image.png'), // Add your cover image here 
                   fit: BoxFit.cover,
-                ),
-              ),
+                ), */
+                  ),
             ),
           ),
           const Expanded(

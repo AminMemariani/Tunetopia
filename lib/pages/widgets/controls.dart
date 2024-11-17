@@ -8,6 +8,7 @@ class Controls extends StatefulWidget {
 }
 
 class _ControlsState extends State<Controls> {
+  bool _isPlaying = false;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -23,8 +24,13 @@ class _ControlsState extends State<Controls> {
             iconSize: 40,
           ),
           IconButton(
-            icon: const Icon(Icons.play_arrow_rounded),
+            icon: _isPlaying
+                ? const Icon(Icons.pause_rounded)
+                : const Icon(Icons.play_arrow_rounded),
             onPressed: () {
+              setState(() {
+                _isPlaying = !_isPlaying;
+              });
               // Add pause functionality here
             },
             iconSize: 40,

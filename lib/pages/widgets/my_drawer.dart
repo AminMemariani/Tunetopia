@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:music_player/constants/style.dart';
 
 class MyDrawer extends StatelessWidget {
   const MyDrawer({super.key});
@@ -17,7 +18,7 @@ class MyDrawer extends StatelessWidget {
           ),
         ),
         ListTile(
-          title: const Text('Settings'),
+          title: const Text('Settings', style: MyStyles.appTextStyle,),
           leading: const Icon(Icons.settings),
           onTap: () {
             Navigator.of(context).pushNamed("settings");

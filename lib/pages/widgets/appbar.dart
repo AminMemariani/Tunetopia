@@ -10,7 +10,6 @@ class MyAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppBar(
       elevation: 0,
-      backgroundColor: Colors.amber,
       centerTitle: true,
       title: Text(title),
       actions: actions,

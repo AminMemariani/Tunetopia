@@ -18,7 +18,10 @@ class MyDrawer extends StatelessWidget {
           ),
         ),
         ListTile(
-          title: const Text('Settings', style: MyStyles.appTextStyle,),
+          title: const Text(
+            'Settings',
+            style: MyStyles.appTextStyle,
+          ),
           leading: const Icon(Icons.settings),
           onTap: () {
             Navigator.of(context).pushNamed("settings");

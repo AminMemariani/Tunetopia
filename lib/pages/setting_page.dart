@@ -10,18 +10,17 @@ class SettingPage extends StatefulWidget {
 }
 
 class _SettingPageState extends State<SettingPage> {
-  ThemeMode _themeMode = ThemeMode.system;
-
-  void _toggleTheme(ThemeMode themeMode) {
-    setState(() {
-      _themeMode = themeMode;
+  bool _isDarkMode = false;
+  @override
+  void initState() {
+    Future.delayed(const Duration(microseconds: 0), () {
+      _isDarkMode = Theme.of(context).brightness == Brightness.dark;
     });
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.amber,
@@ -38,15 +37,13 @@ class _SettingPageState extends State<SettingPage> {
                   children: [
                     const Text("Dark Mode"),
                     Switch.adaptive(
-                      value: isDarkMode,
                       onChanged: (value) {
+                        _isDarkMode = value;
                         setState(() {
-                          value
-                              ? _toggleTheme(ThemeMode.dark)
-                              : _toggleTheme(ThemeMode.light);
+                          Theme.of(context).copyWith(primaryColor: Colors.red);
                         });
-                       // _themeMode = value;
                       },
+                      value: _isDarkMode,
                     ),
                   ],
                 )),

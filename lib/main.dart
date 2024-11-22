@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:music_player/pages/home.dart';
 import 'package:music_player/pages/song_page.dart';
-import 'package:music_player/theme/theme.dart';
+import 'package:music_player/theme/theme_provider.dart';
+import 'package:provider/provider.dart';
 
 import 'pages/setting_page.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(ChangeNotifierProvider(
+    create: (context) => ThemeProvider(),
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -17,8 +21,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      theme: lightMode,
-      darkTheme: darkMode,
+      theme: context.watch<ThemeProvider>().themeData,
       themeMode: ThemeMode.system,
       home: const HomePage(),
       initialRoute: "home",

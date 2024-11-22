@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:music_player/theme/theme.dart';
+import 'package:music_player/theme/theme_provider.dart';
+import 'package:provider/provider.dart';
 
 import '../constants/style.dart';
 
@@ -10,15 +13,6 @@ class SettingPage extends StatefulWidget {
 }
 
 class _SettingPageState extends State<SettingPage> {
-  bool _isDarkMode = false;
-  @override
-  void initState() {
-    Future.delayed(const Duration(microseconds: 0), () {
-      _isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    });
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,12 +32,14 @@ class _SettingPageState extends State<SettingPage> {
                     const Text("Dark Mode"),
                     Switch.adaptive(
                       onChanged: (value) {
-                        _isDarkMode = value;
                         setState(() {
-                          Theme.of(context).copyWith(primaryColor: Colors.red);
+                          context.read<ThemeProvider>().toggleTheme();
                         });
                       },
-                      value: _isDarkMode,
+                      value:
+                          context.read<ThemeProvider>().themeData == lightMode
+                              ? false
+                              : true,
                     ),
                   ],
                 )),

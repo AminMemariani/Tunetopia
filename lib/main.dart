@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:music_player/constants/style.dart';
 import 'package:music_player/pages/home.dart';
 import 'package:music_player/pages/song_page.dart';
+import 'package:music_player/theme/theme.dart';
 
 import 'pages/setting_page.dart';
 
@@ -17,8 +17,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      theme: MyStyles.lightTheme,
-      darkTheme: MyStyles.darkTheme,
+      theme: lightMode,
+      darkTheme: darkMode,
       themeMode: ThemeMode.system,
       home: const HomePage(),
       initialRoute: "home",

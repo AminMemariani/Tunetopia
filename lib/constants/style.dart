@@ -4,14 +4,4 @@ class MyStyles {
   static const TextStyle title = TextStyle(fontFamily: "Pacifico");
   static const TextStyle appTextStyle = TextStyle(fontFamily: "Nunito");
   static const Text appName = Text("Tunetopia ", style: title);
-
-  static ThemeData lightTheme = ThemeData(
-    primaryColor: Colors.amber,
-    brightness: Brightness.light,
-  );
-
-  static ThemeData darkTheme = ThemeData(
-    primaryColor: Colors.blue,
-    brightness: Brightness.dark,
-  );
 }

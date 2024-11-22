@@ -12,7 +12,7 @@ class MyDrawer extends StatelessWidget {
       children: [
         Container(
           height: 100,
-          color: Colors.amber,
+          color: Theme.of(context).colorScheme.primary,
           child: const DrawerHeader(
             child: Text(""),
           ),

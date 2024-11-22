@@ -1,10 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:music_player/pages/widgets/appbar.dart';
 import 'package:music_player/pages/widgets/controls.dart';
 import 'package:permission_handler/permission_handler.dart';
-
-import '../constants/style.dart';
 
 class SongPage extends StatefulWidget {
   const SongPage({super.key});
@@ -38,11 +37,7 @@ class _SongPageState extends State<SongPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.amber,
-          centerTitle: true,
-          title: const Text("Song Name", style: MyStyles.appTextStyle)),
+      appBar: const MyAppBar(title: 'Songs'),
       body: Column(
         children: [
           Expanded(

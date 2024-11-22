@@ -3,7 +3,7 @@ import 'package:music_player/constants/style.dart';
 
 class HomeItem extends StatelessWidget {
   HomeItem({super.key});
-  final List<String> items = ["1", "2", "3"];
+  final List<String> items = ["11111", "222222", "3333333"];
 
   @override
   Widget build(BuildContext context) {
@@ -12,41 +12,34 @@ class HomeItem extends StatelessWidget {
       itemBuilder: (BuildContext context, int index) {
         return GestureDetector(
           onTap: () => Navigator.pushNamed(context, "songs"),
-          child: Container(
-            alignment: Alignment.centerLeft,
-            height: 50,
-            decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.shade50,
-                    spreadRadius: 3,
-                    blurRadius: 7,
-                    offset: const Offset(0.5, 0.5),
-                  ),
-                  const BoxShadow(
-                    color: Colors.white,
-                    spreadRadius: 7,
-                    blurRadius: 3,
-                    offset: Offset(-0.5, -0.5),
-                  ),
-                ],
-                color: const Color.fromARGB(255, 245, 245, 245),
-                borderRadius: const BorderRadius.all(Radius.circular(10))),
-            child: Row(
-              children: [
-                Container(
-                  width: 15,
-                  height: 80,
-                  decoration: const BoxDecoration(
-                      color: Colors.transparent,
-                      borderRadius: BorderRadius.all(Radius.circular(10))),
-                ),
-                Text(
-                  items[index],
-                  style: MyStyles.appTextStyle,
-                ),
-              ],
-            ),
+          child: Row(
+            children: [
+              Container(
+                width: 15,
+                height: 80,
+                decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Theme.of(context).colorScheme.secondary,
+                        spreadRadius: 3,
+                        blurRadius: 7,
+                        offset: const Offset(0.5, 0.5),
+                      ),
+                      BoxShadow(
+                        color: Theme.of(context).colorScheme.secondary,
+                        spreadRadius: 7,
+                        blurRadius: 3,
+                        offset: const Offset(-0.5, -0.5),
+                      ),
+                    ],
+                    color: Colors.transparent,
+                    borderRadius: const BorderRadius.all(Radius.circular(10))),
+              ),
+              Text(
+                items[index],
+                style: MyStyles.appTextStyle,
+              ),
+            ],
           ),
         );
       },

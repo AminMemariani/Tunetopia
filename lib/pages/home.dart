@@ -19,7 +19,7 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: MyStyles.appName,
-        backgroundColor: Colors.amber,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         elevation: 0,
       ),
       drawer: const MyDrawer(),

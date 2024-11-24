@@ -14,7 +14,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   provider: ^6.1.2
   http: ^1.2.2
-  open_file: ^3.5.9
+  open_file: ^3.5.10
   metadata_god: ^1.0.0
   permission_handler: ^11.3.1
   file_picker: ^8.1.4
@@ -26,7 +26,7 @@ dev_dependencies:
   flutter_lints: ^2.0.0
 
 flutter:
-  uses-material-design: true  
+  uses-material-design: true
   fonts:
     - family: Pacifico
       fonts:

@@ -17,6 +17,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: MyStyles.appName,
@@ -36,7 +37,8 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       drawer: const MyDrawer(),
-      body: Padding(padding: const EdgeInsets.all(12), child: HomeItem()),
+      body: HomeItem(),
+      
     );
   }
 }

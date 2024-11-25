@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:music_player/pages/home.dart';
 import 'package:music_player/pages/song_page.dart';
+import 'package:music_player/providers/songs.dart';
 import 'package:music_player/theme/theme_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -18,18 +19,25 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      theme: context.watch<ThemeProvider>().themeData,
-      themeMode: ThemeMode.system,
-      home: const HomePage(),
-      initialRoute: "home",
-      routes: {
-        "home": (ctx) => const HomePage(),
-        "songs": (ctx) => const SongPage(),
-        "settings": (ctx) => const SettingPage()
-      },
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(
+          value: Songs(),
+        ),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Flutter Demo',
+        theme: context.watch<ThemeProvider>().themeData,
+        themeMode: ThemeMode.system,
+        home: const HomePage(),
+        initialRoute: "home",
+        routes: {
+          "home": (ctx) => const HomePage(),
+          "songs": (ctx) => const SongPage(),
+          "settings": (ctx) => const SettingPage()
+        },
+      ),
     );
   }
 }

@@ -1,14 +1,14 @@
 import 'package:flutter/foundation.dart';
 
 class Song with ChangeNotifier {
-  int songId;
   String? songImage;
   String songName;
   String? songArtist;
+  String? filePath;
   String? songAlbum;
   Song({
-    required this.songId,
     required this.songName,
+    this.filePath,
     this.songArtist,
     this.songImage,
     this.songAlbum,

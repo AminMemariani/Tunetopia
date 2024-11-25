@@ -2,6 +2,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 import 'package:music_player/pages/widgets/my_drawer.dart';
+import 'package:music_player/providers/songs.dart';
+import 'package:provider/provider.dart';
 
 import 'widgets/home_item.dart';
 import '../constants/style.dart';
@@ -17,7 +19,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: MyStyles.appName,
@@ -31,14 +32,14 @@ class _HomePageState extends State<HomePage> {
                   type: FileType.custom,
                   allowedExtensions: ['mp3', 'wav', 'ogg', 'aac'],
                 );
-                debugPrint("result: ${result.toString()}");
+                //debugPrint("result: ${result.toString()}");
+                context.read<Songs>().addSongs(result.toString());
               },
               icon: const Icon(Icons.add))
         ],
       ),
       drawer: const MyDrawer(),
       body: HomeItem(),
-      
     );
   }
 }

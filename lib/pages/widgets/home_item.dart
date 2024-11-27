@@ -4,7 +4,7 @@ import 'package:music_player/providers/songs.dart';
 import 'package:provider/provider.dart';
 
 class HomeItem extends StatelessWidget {
-  HomeItem({super.key});
+  const HomeItem({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +40,7 @@ class HomeItem extends StatelessWidget {
                     color: Theme.of(context).colorScheme.secondary,
                     borderRadius: const BorderRadius.all(Radius.circular(10))),
                 child: Text(
-                  "${index + 1}- ${snapshot.songs[index]}",
+                  "${index + 1}- ${snapshot.songs[index]?.songName}",
                   style: MyStyles.appTextStyle,
                 ),
               ),

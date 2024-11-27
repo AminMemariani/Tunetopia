@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:metadata_god/metadata_god.dart';
 import 'package:music_player/pages/home.dart';
 import 'package:music_player/pages/song_page.dart';
 import 'package:music_player/providers/songs.dart';
@@ -7,7 +8,9 @@ import 'package:provider/provider.dart';
 
 import 'pages/setting_page.dart';
 
-void main() {
+Future<void> main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await MetadataGod.initialize();
   runApp(ChangeNotifierProvider(
     create: (context) => ThemeProvider(),
     child: const MyApp(),

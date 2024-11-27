@@ -33,7 +33,9 @@ class _HomePageState extends State<HomePage> {
                   allowedExtensions: ['mp3', 'wav', 'ogg', 'aac'],
                 );
                 //debugPrint("result: ${result.toString()}");
-                context.read<Songs>().addSongs(result.toString());
+                if (context.mounted) {
+                  context.read<Songs>().addSongs(result.toString());
+                }
               },
               icon: const Icon(Icons.add))
         ],

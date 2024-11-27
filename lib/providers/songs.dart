@@ -1,7 +1,16 @@
 import 'package:flutter/foundation.dart';
+import 'package:music_player/models/song.dart';
 
 class Songs with ChangeNotifier {
-  final List<String> songs = [];
+  final List<Song> _songs = [];
+
+  Song? findByName(String name) {
+    return _songs.firstWhere((sng) => sng.songName == name);
+  }
+
+  List<Song> get songs {
+    return [..._songs];
+  }
 
   Future<void> addSongs(String files) async {
     RegExp regex = RegExp(r"name: ([^,]+)");
@@ -13,13 +22,9 @@ class Songs with ChangeNotifier {
       for (Match? match in matches) {
         filenames.add(match!.group(1)!.trim());
       }
-      songs.addAll(filenames);
-      for (String song in songs) {
-        debugPrint(song);
-        notifyListeners();
-      }
+      notifyListeners();
     } else {
-      print("Filename not found.");
+      debugPrint("Filename not found.");
     }
   }
 }

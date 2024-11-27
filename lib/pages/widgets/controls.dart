@@ -12,7 +12,7 @@ class _ControlsState extends State<Controls> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Theme.of(context).colorScheme.secondary,
+      color: Theme.of(context).colorScheme.surface,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -62,6 +62,7 @@ class _ControlsState extends State<Controls> {
             children: [
               IconButton(
                 icon: const Icon(Icons.skip_previous_rounded),
+                color: Theme.of(context).colorScheme.tertiary,
                 onPressed: () {
                   // Add play functionality here
                 },
@@ -85,6 +86,7 @@ class _ControlsState extends State<Controls> {
               ),
               IconButton(
                 icon: const Icon(Icons.skip_next_rounded),
+                color: Theme.of(context).colorScheme.tertiary,
                 onPressed: () {
                   // Add stop functionality here
                 },

@@ -5,6 +5,8 @@ import 'package:music_player/pages/widgets/appbar.dart';
 import 'package:music_player/pages/widgets/controls.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../models/song.dart';
+
 class SongPage extends StatefulWidget {
   const SongPage({super.key});
 
@@ -13,6 +15,7 @@ class SongPage extends StatefulWidget {
 }
 
 class _SongPageState extends State<SongPage> {
+  Song? song;
   _asyncMethod() async {
     final hasStorageAccess =
         Platform.isAndroid ? await Permission.storage.isGranted : true;
@@ -35,9 +38,10 @@ class _SongPageState extends State<SongPage> {
 
   @override
   Widget build(BuildContext context) {
+    song = ModalRoute.of(context)?.settings.arguments as Song;
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: const MyAppBar(title: 'Songs'),
+      appBar: MyAppBar(title: song!.songName),
       body: Column(
         children: [
           Expanded(

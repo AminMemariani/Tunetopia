@@ -13,7 +13,7 @@ class HomeItem extends StatelessWidget {
         itemCount: snapshot.songs.length,
         itemBuilder: (BuildContext context, int index) {
           return GestureDetector(
-            onTap: () => Navigator.pushNamed(context, "songs"),
+            onTap: () => Navigator.pushNamed(context, "songs", arguments: snapshot.songs[index]),
             child: Padding(
               padding:
                   const EdgeInsets.only(top: 8, bottom: 8, left: 16, right: 16),

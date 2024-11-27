@@ -58,7 +58,7 @@ class _ControlsState extends State<Controls> {
             ),
           ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               IconButton(
                 icon: const Icon(Icons.skip_previous_rounded),
@@ -67,17 +67,21 @@ class _ControlsState extends State<Controls> {
                 },
                 iconSize: 40,
               ),
-              IconButton(
-                icon: _isPlaying
-                    ? const Icon(Icons.pause_rounded)
-                    : const Icon(Icons.play_arrow_rounded),
-                onPressed: () {
-                  setState(() {
-                    _isPlaying = !_isPlaying;
-                  });
-                  // Add pause functionality here
-                },
-                iconSize: 40,
+              CircleAvatar(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                radius: 30,
+                child: IconButton(
+                  icon: _isPlaying
+                      ? const Icon(Icons.pause_rounded)
+                      : const Icon(Icons.play_arrow_rounded),
+                  onPressed: () {
+                    setState(() {
+                      _isPlaying = !_isPlaying;
+                    });
+                    // Add pause functionality here
+                  },
+                  iconSize: 40,
+                ),
               ),
               IconButton(
                 icon: const Icon(Icons.skip_next_rounded),

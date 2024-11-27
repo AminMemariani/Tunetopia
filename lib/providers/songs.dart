@@ -15,13 +15,16 @@ class Songs with ChangeNotifier {
   updateSongs() {}
 
   Future<void> addSongs(String files) async {
-    RegExp regex = RegExp(r"name: ([^,]+)");
+    RegExp regex = RegExp(r"PlatformFile\(path ([^,]*)");
 
     Iterable<Match?> matches = regex.allMatches(files);
 
     if (matches.isNotEmpty) {
       for (Match? match in matches) {
-        _songs.add(Song(songName: match!.group(1)!.trim(), filePath: ""));
+        _songs.add(Song(
+            songName: match!.group(1)!.trim().split('/').last,
+            filePath: match.group(1)!.trim()));
+
       }
 
       notifyListeners();

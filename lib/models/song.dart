@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 class Song with ChangeNotifier {
-  String? songImage;
+  Uint8List? songImage;
   String songName;
   String? songArtist;
   String? filePath;

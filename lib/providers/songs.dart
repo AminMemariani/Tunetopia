@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:metadata_god/metadata_god.dart';
 import 'package:music_player/models/song.dart';
 
@@ -33,12 +33,15 @@ class Songs with ChangeNotifier {
     }
   }
 
-  Future<Widget> loadImage(String file) async {
-      Metadata metadata = await MetadataGod.readMetadata(file: file);
-    if (file != "" || metadata.picture?.data != null) {
-      return Image.memory(metadata.picture!.data);
-    } else {
-      return const Icon(Icons.music_note_rounded);
+  Future<void> loadImage(Song song) async {
+    try {
+      Metadata metadata =
+          await MetadataGod.readMetadata(file: song.filePath.toString());
+      if (song.filePath != "" || metadata.picture?.data != null) {
+        song.songImage = metadata.picture!.data;
+      }
+    } catch (e) {
+      debugPrint("File Path: ${song.filePath}");
     }
   }
 }

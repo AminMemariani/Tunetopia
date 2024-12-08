@@ -23,13 +23,7 @@ class _SongPageState extends State<SongPage>
   late AnimationController _controller;
   late Animation<double> _animation;
 
-  Future _obtainSong() {
-    return Provider.of<Songs>(context, listen: false)
-        .loadImage(song?.filePath ?? "");
-  }
-
   _asyncMethod() async {
-    metadataFuture = _obtainSong();
     final hasStorageAccess =
         Platform.isAndroid ? await Permission.storage.isGranted : true;
     if (!hasStorageAccess) {
@@ -69,85 +63,74 @@ class _SongPageState extends State<SongPage>
   Widget build(BuildContext context) {
     song = ModalRoute.of(context)?.settings.arguments as Song;
     final size = MediaQuery.of(context).size;
+    context.read<Songs>().loadImage(song!);
 
-    return FutureBuilder(
-        future: metadataFuture,
-        builder: (ctx, snapshot) {
-          return Scaffold(
-            backgroundColor: Theme.of(context).colorScheme.surface,
-            appBar: MyAppBar(title: song?.songName ?? "No Name"),
-            body: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Theme.of(context).colorScheme.surface,
-                    Theme.of(context)
-                        .colorScheme
-                        .primaryContainer
-                        .withOpacity(0.3),
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      appBar: MyAppBar(
+        title: song?.songName ?? "No Name",
+        actions: const [
+          IconButton(onPressed: null, icon: Icon(Icons.info_outline_rounded))
+        ],
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Theme.of(context).colorScheme.surface,
+              Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
+            ],
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              flex: 7,
+              child: FadeTransition(
+                opacity: _animation,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Center(
+                      child: Hero(
+                        tag: song!.filePath.toString(),
+                        child: Container(
+                          width: size.width * 0.45,
+                          height: size.width * 0.45,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 20,
+                                offset: const Offset(0, 10),
+                              ),
+                            ],
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: song?.songImage == null
+                                ? const Icon(Icons.music_note_rounded)
+                                : Image.memory(song!.songImage!),
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    flex: 7,
-                    child: FadeTransition(
-                      opacity: _animation,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Center(
-                            child: Hero(
-                              tag: song!.filePath.toString(),
-                              child: Container(
-                                width: size.width * 0.45,
-                                height: size.width * 0.45,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.2),
-                                      blurRadius: 20,
-                                      offset: const Offset(0, 10),
-                                    ),
-                                  ],
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: snapshot.data ??
-                                      Container(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .surface,
-                                        child: Icon(
-                                          Icons.music_note,
-                                          size: 80,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                        ),
-                                      ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const Expanded(
-                    flex: 2,
-                    child: Controls(),
-                  ),
-                  const SizedBox(height: 20),
-                ],
-              ),
             ),
-          );
-        });
+            const Expanded(
+              flex: 2,
+              child: Controls(),
+            ),
+            const SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
   }
 }

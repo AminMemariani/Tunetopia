@@ -13,7 +13,8 @@ class HomeItem extends StatelessWidget {
         itemCount: snapshot.songs.length,
         itemBuilder: (BuildContext context, int index) {
           return GestureDetector(
-            onTap: () => Navigator.pushNamed(context, "songs", arguments: snapshot.songs[index]),
+            onTap: () => Navigator.pushNamed(context, "songs",
+                arguments: snapshot.songs[index]),
             child: Padding(
               padding:
                   const EdgeInsets.only(top: 8, bottom: 8, left: 16, right: 16),
@@ -26,14 +27,14 @@ class HomeItem extends StatelessWidget {
                     boxShadow: [
                       BoxShadow(
                         color: Theme.of(context).colorScheme.secondary,
-                        spreadRadius: 2,
-                        blurRadius: 5,
+                        spreadRadius: 3,
+                        blurRadius: 0,
                         offset: const Offset(0.5, 0.5),
                       ),
                       BoxShadow(
                         color: Theme.of(context).colorScheme.secondary,
-                        spreadRadius: 5,
-                        blurRadius: 2,
+                        spreadRadius: 3,
+                        blurRadius: 0,
                         offset: const Offset(-0.5, -0.5),
                       ),
                     ],

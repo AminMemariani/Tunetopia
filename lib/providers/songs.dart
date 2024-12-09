@@ -13,8 +13,6 @@ class Songs with ChangeNotifier {
     return [..._songs];
   }
 
-  updateSongs() {}
-
   Future<void> addSongs(String files) async {
     RegExp regex = RegExp(r"PlatformFile\(path ([^,]*)");
 

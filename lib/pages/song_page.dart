@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_memory_image/cached_memory_image.dart';
 import 'package:flutter/material.dart';
 import 'package:music_player/pages/widgets/appBar.dart';
 import 'package:music_player/providers/songs.dart';
@@ -114,7 +115,13 @@ class _SongPageState extends State<SongPage>
                             borderRadius: BorderRadius.circular(20),
                             child: song?.songImage == null
                                 ? const Icon(Icons.music_note_rounded)
-                                : Image.memory(song!.songImage!),
+                                : CachedMemoryImage(
+                                    uniqueKey: 'app://image/1',
+                                    errorWidget: const Text('Error'),
+                                    base64: song!.songImage.toString(),
+                                    placeholder:
+                                        const CircularProgressIndicator(),
+                                  ),
                           ),
                         ),
                       ),

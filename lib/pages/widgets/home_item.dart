@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:music_player/constants/style.dart';
 import 'package:music_player/providers/songs.dart';
+import 'package:music_player/utils/duration_formatter.dart';
 import 'package:provider/provider.dart';
 
 class HomeItem extends StatelessWidget {
@@ -40,9 +41,22 @@ class HomeItem extends StatelessWidget {
                     ],
                     color: Theme.of(context).colorScheme.secondary,
                     borderRadius: const BorderRadius.all(Radius.circular(10))),
-                child: Text(
-                  "${index + 1}- ${snapshot.songs[index].songName}",
-                  style: MyStyles.appTextStyle,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "${index + 1}- ${snapshot.songs[index].songName}",
+                        style: MyStyles.appTextStyle,
+                      ),
+                      Text(
+                        DurationFormatter.formatDuration(
+                            snapshot.songs[index].duration),
+                        style: MyStyles.appTextStyle,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

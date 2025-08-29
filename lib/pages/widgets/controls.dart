@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:music_player/utils/duration_formatter.dart';
 import 'dart:async';
 
 class Controls extends StatefulWidget {
@@ -113,11 +114,7 @@ class _ControlsState extends State<Controls> {
   }
 
   String _formatDuration(Duration? duration) {
-    if (duration == null) return "0:00";
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
-    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
-    return "$twoDigitMinutes:$twoDigitSeconds";
+    return DurationFormatter.formatDuration(duration);
   }
 
   @override

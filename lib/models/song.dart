@@ -6,11 +6,14 @@ class Song with ChangeNotifier {
   String? songArtist;
   String? filePath;
   String? songAlbum;
+  Duration? duration;
+  
   Song({
     required this.songName,
     this.filePath,
     this.songArtist,
     this.songImage,
     this.songAlbum,
+    this.duration,
   });
 }

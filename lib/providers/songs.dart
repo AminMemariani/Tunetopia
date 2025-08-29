@@ -35,11 +35,20 @@ class Songs with ChangeNotifier {
     try {
       Metadata metadata =
           await MetadataGod.readMetadata(file: song.filePath.toString());
-      if (song.filePath != "" || metadata.picture?.data != null) {
+      
+      // Extract image if available
+      if (song.filePath != "" && metadata.picture?.data != null) {
         song.songImage = metadata.picture!.data;
+      }
+      
+      // Extract duration from metadata
+      if (metadata.duration != null) {
+        song.duration = metadata.duration;
+        song.notifyListeners(); // Notify listeners that the song has been updated
       }
     } catch (e) {
       debugPrint("File Path: ${song.filePath}");
+      debugPrint("Error loading metadata: $e");
     }
   }
 }

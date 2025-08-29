@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class Controls extends StatefulWidget {
-  const Controls({super.key});
+  final Duration? duration;
+
+  const Controls({super.key, this.duration});
 
   @override
   State<Controls> createState() => _ControlsState();
@@ -9,6 +11,15 @@ class Controls extends StatefulWidget {
 
 class _ControlsState extends State<Controls> {
   bool _isPlaying = false;
+  
+  String _formatDuration(Duration? duration) {
+    if (duration == null) return "0:00";
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+    return "$twoDigitMinutes:$twoDigitSeconds";
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -17,7 +28,7 @@ class _ControlsState extends State<Controls> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            const Text("Start time"),
+            const Text("0:00"),
             Expanded(
               child: SliderTheme(
                 data: SliderTheme.of(context).copyWith(
@@ -31,13 +42,9 @@ class _ControlsState extends State<Controls> {
                       enabledThumbRadius: 7.0, elevation: 0),
                   overlayColor: Theme.of(context).colorScheme.secondary,
                 ),
-                child: const Slider(
+                child: Slider(
                     min: 0.0,
-                    /* max: _duration.inSeconds.toDouble() == 0
-                      ? 1.0
-                      : _duration.inSeconds.toDouble(), */
-                    max: 100,
-                    //value: _position.inSeconds.toDouble(),
+                    max: widget.duration?.inSeconds.toDouble() ?? 100.0,
                     value: 0,
                     onChanged: /* (double val) async {
                     final pos = Duration(seconds: val.toInt());
@@ -45,7 +52,10 @@ class _ControlsState extends State<Controls> {
                         null),
               ),
             ),
-            const Text("End time"),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(_formatDuration(widget.duration)),
+            ),
           ],
         ),
         Row(

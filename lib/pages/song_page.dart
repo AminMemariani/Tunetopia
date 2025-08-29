@@ -23,6 +23,7 @@ class _SongPageState extends State<SongPage>
   Future? metadataFuture;
   late AnimationController _controller;
   late Animation<double> _animation;
+  bool _isLoadingMetadata = false;
 
   _asyncMethod() async {
     final hasStorageAccess =
@@ -64,7 +65,18 @@ class _SongPageState extends State<SongPage>
   Widget build(BuildContext context) {
     song = ModalRoute.of(context)?.settings.arguments as Song;
     final size = MediaQuery.of(context).size;
-    context.read<Songs>().loadImage(song!);
+    
+    // Load metadata if not already loading
+    if (!_isLoadingMetadata) {
+      _isLoadingMetadata = true;
+      context.read<Songs>().loadImage(song!).then((_) {
+        if (mounted) {
+          setState(() {
+            _isLoadingMetadata = false;
+          });
+        }
+      });
+    }
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -120,7 +132,8 @@ class _SongPageState extends State<SongPage>
                                     errorWidget: const Text('Error'),
                                     base64: song!.songImage.toString(),
                                     placeholder:
-                                        const CircularProgressIndicator(),
+                                        const CircularProgressIndicator
+                                        .adaptive(),
                                   ),
                           ),
                         ),
@@ -130,9 +143,9 @@ class _SongPageState extends State<SongPage>
                 ),
               ),
             ),
-            const Expanded(
+            Expanded(
               flex: 2,
-              child: Controls(),
+              child: Controls(duration: song?.duration),
             ),
             const SizedBox(height: 20),
           ],

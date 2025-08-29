@@ -145,7 +145,10 @@ class _SongPageState extends State<SongPage>
             ),
             Expanded(
               flex: 2,
-              child: Controls(duration: song?.duration),
+              child: Controls(
+                duration: song?.duration,
+                filePath: song?.filePath,
+              ),
             ),
             const SizedBox(height: 20),
           ],

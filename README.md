@@ -1,6 +1,6 @@
 # Tunetopia 🎵
 
-A modern, cross-platform music player built with Flutter that supports local audio files with beautiful Material 3 design.
+A modern, cross-platform music player built with Flutter that supports local audio files with a beautiful design.
 
 ## Features ✨
 

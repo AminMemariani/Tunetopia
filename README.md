@@ -326,20 +326,3 @@ source "$HOME/.cargo/env"
 ## License 📄
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Support 💬
-
-- **Issues**: Report bugs and request features on [GitHub Issues](https://github.com/yourusername/Tunetopia/issues)
-- **Discussions**: Join the conversation on [GitHub Discussions](https://github.com/yourusername/Tunetopia/discussions)
-- **Documentation**: Check the [Flutter Documentation](https://docs.flutter.dev/)
-
-## Acknowledgments 🙏
-
-- Flutter team for the amazing framework
-- AudioPlayers package contributors
-- Material Design team for the design system
-- All contributors to this project
-
----
-
-**Happy coding! 🎵✨**

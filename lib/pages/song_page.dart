@@ -81,7 +81,7 @@ class _SongPageState extends State<SongPage>
             end: Alignment.bottomCenter,
             colors: [
               Theme.of(context).colorScheme.surface,
-              Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
+              Theme.of(context).colorScheme.primaryContainer.withAlpha(77),
             ],
           ),
         ),
@@ -105,7 +105,7 @@ class _SongPageState extends State<SongPage>
                             borderRadius: BorderRadius.circular(20),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
+                                color: Colors.black.withAlpha(50),
                                 blurRadius: 20,
                                 offset: const Offset(0, 10),
                               ),

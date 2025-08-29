@@ -14,7 +14,7 @@ class MyDrawer extends StatelessWidget {
           height: 100,
           color: Theme.of(context).colorScheme.primary,
           child: const DrawerHeader(
-            child: Text(""),
+            child: Text("Tunetopia"),
           ),
         ),
         ListTile(

@@ -32,7 +32,6 @@ class _HomePageState extends State<HomePage> {
                   type: FileType.custom,
                   allowedExtensions: ['mp3', 'wav', 'ogg', 'aac'],
                 );
-                //debugPrint("result: ${result.toString()}");
                 if (context.mounted) {
                   context.read<Songs>().addSongs(result.toString());
                 }

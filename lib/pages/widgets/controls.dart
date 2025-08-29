@@ -17,7 +17,7 @@ class _ControlsState extends State<Controls> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Text("Start time"),
+            const Text("Start time"),
             Expanded(
               child: SliderTheme(
                 data: SliderTheme.of(context).copyWith(
@@ -45,7 +45,7 @@ class _ControlsState extends State<Controls> {
                         null),
               ),
             ),
-            Text("End time"),
+            const Text("End time"),
           ],
         ),
         Row(

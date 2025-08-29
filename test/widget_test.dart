@@ -17,7 +17,7 @@ void main() {
       final song = Song(
         songName: 'Test Song',
         filePath: '/path/to/song.mp3',
-        duration: Duration(minutes: 3, seconds: 45),
+        durationInSeconds: 225, // 3 minutes 45 seconds
       );
 
       expect(song.songName, 'Test Song');
@@ -63,10 +63,10 @@ void main() {
       await songsProvider.addSongs(files);
 
       expect(songsProvider.songs.length, 2);
-      expect(songsProvider.songs[0]?.songName, 'song1.mp3)');
-      expect(songsProvider.songs[0]?.filePath, '/path/to/song1.mp3)');
-      expect(songsProvider.songs[1]?.songName, 'song2.mp3)');
-      expect(songsProvider.songs[1]?.filePath, '/path/to/song2.mp3)');
+      expect(songsProvider.songs[0].songName, 'song1.mp3)');
+      expect(songsProvider.songs[0].filePath, '/path/to/song1.mp3)');
+      expect(songsProvider.songs[1].songName, 'song2.mp3)');
+      expect(songsProvider.songs[1].filePath, '/path/to/song2.mp3)');
     });
 
     test('should handle empty files string', () async {

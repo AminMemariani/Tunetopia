@@ -1,16 +1,39 @@
 import 'package:flutter/foundation.dart';
 import 'package:metadata_god/metadata_god.dart';
 import 'package:music_player/models/song.dart';
+import 'package:music_player/data/song_database.dart';
 
 class Songs with ChangeNotifier {
-  final List<Song?> _songs = [];
+  final List<Song> _songs = [];
+  bool _isInitialized = false;
 
-  Song? findByName(String name) {
-    return _songs.firstWhere((sng) => sng?.songName == name);
+  // Initialize the provider and load songs from database
+  Future<void> initialize() async {
+    if (!_isInitialized) {
+      await SongDatabase.initialize();
+      await loadSongsFromDatabase();
+      _isInitialized = true;
+    }
   }
 
-  List<Song?> get songs {
+  Song? findByName(String name) {
+    return _songs.firstWhere((sng) => sng.songName == name);
+  }
+
+  List<Song> get songs {
     return [..._songs];
+  }
+
+  // Load songs from the database
+  Future<void> loadSongsFromDatabase() async {
+    try {
+      final songsFromDb = SongDatabase.getAllSongs();
+      _songs.clear();
+      _songs.addAll(songsFromDb);
+      notifyListeners();
+    } catch (e) {
+      debugPrint("Error loading songs from database: $e");
+    }
   }
 
   Future<void> addSongs(String files) async {
@@ -19,13 +42,29 @@ class Songs with ChangeNotifier {
     Iterable<Match?> matches = regex.allMatches(files);
 
     if (matches.isNotEmpty) {
+      List<Song> newSongs = [];
+      
       for (Match? match in matches) {
-        _songs.add(Song(
-            songName: match!.group(1)!.trim().split('/').last,
-            filePath: match.group(1)!.trim()));
-      }
+        final filePath = match!.group(1)!.trim();
+        final songName = filePath.split('/').last;
 
-      notifyListeners();
+        // Check if song already exists in database
+        if (!SongDatabase.songExists(filePath)) {
+          final song = Song(
+            songName: songName,
+            filePath: filePath,
+          );
+
+          newSongs.add(song);
+          _songs.add(song);
+        }
+      }
+      
+      // Save new songs to database
+      if (newSongs.isNotEmpty) {
+        await SongDatabase.addSongs(newSongs);
+        notifyListeners();
+      }
     } else {
       debugPrint("Filename not found.");
     }
@@ -44,8 +83,11 @@ class Songs with ChangeNotifier {
       // Extract duration from metadata
       if (metadata.duration != null) {
         song.duration = metadata.duration;
-        song.notifyListeners(); // Notify listeners that the song has been updated
       }
+
+      // Update song in database with new metadata
+      await SongDatabase.updateSong(song);
+      song.notifyListeners(); // Notify listeners that the song has been updated
     } catch (e) {
       debugPrint("File Path: ${song.filePath}");
       debugPrint("Error loading metadata: $e");

@@ -15,10 +15,10 @@ void main() {
         final song = Song(
           songName: 'Test Song',
           filePath: '/path/to/song.mp3',
-          duration: Duration(minutes: 3, seconds: 45),
+          durationInSeconds: 225, // 3 minutes 45 seconds
         );
 
-        expect(song.duration, Duration(minutes: 3, seconds: 45));
+        expect(song.duration, const Duration(minutes: 3, seconds: 45));
         expect(song.duration?.inSeconds, 225);
         expect(song.duration?.inMinutes, 3);
       });
@@ -49,7 +49,7 @@ void main() {
         final song = Song(
           songName: 'Test Song',
           filePath: '/path/to/song.mp3',
-          duration: Duration.zero,
+          durationInSeconds: 0,
         );
 
         expect(song.duration, Duration.zero);
@@ -62,7 +62,7 @@ void main() {
         final song = Song(
           songName: 'Test Song',
           filePath: '/path/to/song.mp3',
-          duration: longDuration,
+          durationInSeconds: 9015, // 2*3600 + 30*60 + 15
         );
 
         expect(song.duration, longDuration);
@@ -124,8 +124,8 @@ void main() {
         expect(songsProvider.songs.length, 2);
 
         // Initially songs don't have duration until metadata is loaded
-        expect(songsProvider.songs[0]?.duration, null);
-        expect(songsProvider.songs[1]?.duration, null);
+        expect(songsProvider.songs[0].duration, null);
+        expect(songsProvider.songs[1].duration, null);
       });
 
       test('should handle empty files string', () async {
@@ -208,10 +208,10 @@ void main() {
         final song = Song(
           songName: 'test.mp3',
           filePath: '/path/to/test.mp3',
-          duration: Duration(milliseconds: 100),
+          durationInSeconds: 0, // Less than 1 second
         );
 
-        expect(song.duration?.inMilliseconds, 100);
+        expect(song.duration?.inMilliseconds, 0);
         expect(song.duration?.inSeconds, 0);
       });
 
@@ -219,10 +219,9 @@ void main() {
         final song = Song(
           songName: 'test.mp3',
           filePath: '/path/to/test.mp3',
-          duration: Duration(milliseconds: 1500), // 1.5 seconds
+          durationInSeconds: 1, // 1 second
         );
 
-        expect(song.duration?.inMilliseconds, 1500);
         expect(song.duration?.inSeconds, 1);
       });
     });

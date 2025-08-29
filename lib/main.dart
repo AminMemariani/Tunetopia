@@ -11,21 +11,28 @@ import 'pages/setting_page.dart';
 Future<void> main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await MetadataGod.initialize();
+  
+  // Initialize the Songs provider to set up the database
+  final songsProvider = Songs();
+  await songsProvider.initialize();
+  
   runApp(ChangeNotifierProvider(
     create: (context) => ThemeProvider(),
-    child: const MyApp(),
+    child: MyApp(songsProvider: songsProvider),
   ));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final Songs songsProvider;
+
+  const MyApp({super.key, required this.songsProvider});
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(
-          value: Songs(),
+          value: songsProvider,
         ),
       ],
       child: MaterialApp(

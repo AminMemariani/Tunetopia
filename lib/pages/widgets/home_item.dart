@@ -41,7 +41,7 @@ class HomeItem extends StatelessWidget {
                     color: Theme.of(context).colorScheme.secondary,
                     borderRadius: const BorderRadius.all(Radius.circular(10))),
                 child: Text(
-                  "${index + 1}- ${snapshot.songs[index]?.songName}",
+                  "${index + 1}- ${snapshot.songs[index].songName}",
                   style: MyStyles.appTextStyle,
                 ),
               ),

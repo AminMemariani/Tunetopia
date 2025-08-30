@@ -17,10 +17,10 @@ class ThemeProvider with ChangeNotifier {
   // Initialize theme from saved preference
   Future<void> initialize() async {
     if (_isInitialized) return;
-    
+
     try {
       final isDarkMode = ThemeDatabase.loadThemeMode();
-      
+
       _themeData = isDarkMode ? darkMode : lightMode;
       _isInitialized = true;
       notifyListeners();

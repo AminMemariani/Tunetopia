@@ -36,6 +36,21 @@ class Songs with ChangeNotifier {
     }
   }
 
+  // Remove a song from the library (both memory and database)
+  Future<void> removeSongFromLibrary(Song song) async {
+    try {
+      // Remove from database
+      await SongDatabase.removeSong(song);
+
+      // Remove from memory
+      _songs.removeWhere((s) => s.filePath == song.filePath);
+
+      notifyListeners();
+    } catch (e) {
+      debugPrint("Error removing song from library: $e");
+    }
+  }
+
   Future<void> addSongs(String files) async {
     RegExp regex = RegExp(r"PlatformFile\(path ([^,]*)");
 

@@ -24,6 +24,8 @@ class _SongPageState extends State<SongPage>
   late AnimationController _controller;
   late Animation<double> _animation;
   bool _isLoadingMetadata = false;
+  bool _isCheckingFile = false;
+  bool _fileExists = true;
 
   _asyncMethod() async {
     final hasStorageAccess =
@@ -34,6 +36,53 @@ class _SongPageState extends State<SongPage>
         return;
       }
     }
+  }
+
+  Future<bool> _checkFileExists(String? filePath) async {
+    if (filePath == null || filePath.isEmpty) return false;
+
+    try {
+      final file = File(filePath);
+      return await file.exists();
+    } catch (e) {
+      debugPrint('Error checking file existence: $e');
+      return false;
+    }
+  }
+
+  void _showFileNotFoundDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog.adaptive(
+          title: const Text('File Not Found'),
+          content: const Text(
+            'The song file is no longer available on your device. '
+            'It may have been moved or deleted.\n\n'
+            'The song will be removed from your library.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                final navigator = Navigator.of(context);
+                navigator.pop(); // Close dialog
+
+                // Remove song from database and provider
+                if (song != null) {
+                  await context.read<Songs>().removeSongFromLibrary(song!);
+                }
+
+                if (mounted) {
+                  navigator.pop(); // Go back to home page
+                }
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -50,9 +99,46 @@ class _SongPageState extends State<SongPage>
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _asyncMethod();
+      _checkSongFile();
     });
 
     super.initState();
+  }
+
+  Future<void> _checkSongFile() async {
+    if (_isCheckingFile) return;
+
+    setState(() {
+      _isCheckingFile = true;
+    });
+
+    try {
+      final song = ModalRoute.of(context)?.settings.arguments as Song?;
+      if (song != null) {
+        final exists = await _checkFileExists(song.filePath);
+        if (mounted) {
+          setState(() {
+            _fileExists = exists;
+            _isCheckingFile = false;
+          });
+
+          if (!exists && mounted) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) {
+                _showFileNotFoundDialog();
+              }
+            });
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error checking song file: $e');
+      if (mounted) {
+        setState(() {
+          _isCheckingFile = false;
+        });
+      }
+    }
   }
 
   @override
@@ -65,6 +151,78 @@ class _SongPageState extends State<SongPage>
   Widget build(BuildContext context) {
     song = ModalRoute.of(context)?.settings.arguments as Song;
     final size = MediaQuery.of(context).size;
+    
+    // Show loading or file not found state
+    if (_isCheckingFile) {
+      return Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        appBar: MyAppBar(
+          title: song?.songName ?? "No Name",
+          actions: const [
+            IconButton(onPressed: null, icon: Icon(Icons.info_outline_rounded))
+          ],
+        ),
+        body: const Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 16),
+              Text('Checking file availability...'),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // Show file not found state
+    if (!_fileExists) {
+      return Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        appBar: MyAppBar(
+          title: song?.songName ?? "No Name",
+          actions: const [
+            IconButton(onPressed: null, icon: Icon(Icons.info_outline_rounded))
+          ],
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.error_outline,
+                size: 64,
+                color: Theme.of(context).colorScheme.error,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'File Not Found',
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'The song file is no longer available on your device.\nIt may have been moved or deleted.',
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () async {
+                  final navigator = Navigator.of(context);
+                  // Remove song from database and provider
+                  if (song != null) {
+                    await context.read<Songs>().removeSongFromLibrary(song!);
+                  }
+                  if (mounted) {
+                    navigator.pop();
+                  }
+                },
+                child: const Text('Go Back to Home'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
     
     // Load metadata if not already loading
     if (!_isLoadingMetadata) {

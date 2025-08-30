@@ -5,15 +5,13 @@ class SongDatabase {
   static const String _boxName = 'songs_box';
   static Box<Song>? _box;
 
-  // Initialize Hive and open the songs box
+    // Initialize Hive and open the songs box
   static Future<void> initialize() async {
-    await Hive.initFlutter();
-
     // Register the Song adapter
     if (!Hive.isAdapterRegistered(0)) {
       Hive.registerAdapter(SongAdapter());
     }
-
+    
     // Open the songs box
     _box = await Hive.openBox<Song>(_boxName);
   }

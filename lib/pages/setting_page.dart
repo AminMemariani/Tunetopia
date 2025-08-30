@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:music_player/theme/theme.dart';
 import 'package:music_player/theme/theme_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -32,14 +31,9 @@ class _SettingPageState extends State<SettingPage> {
                     const Text("Dark Mode"),
                     Switch.adaptive(
                       onChanged: (value) {
-                        setState(() {
-                          context.read<ThemeProvider>().toggleTheme();
-                        });
+                        context.read<ThemeProvider>().toggleTheme();
                       },
-                      value:
-                          context.read<ThemeProvider>().themeData == lightMode
-                              ? false
-                              : true,
+                      value: context.watch<ThemeProvider>().isDarkMode,
                     ),
                   ],
                 )),

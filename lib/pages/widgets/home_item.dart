@@ -50,11 +50,17 @@ class HomeItem extends StatelessWidget {
                         "${index + 1}- ${snapshot.songs[index].songName}",
                         style: MyStyles.appTextStyle,
                       ),
-                      Text(
-                        DurationFormatter.formatDuration(
-                            snapshot.songs[index].duration),
-                        style: MyStyles.appTextStyle,
-                      ),
+                      snapshot.songs[index].duration != null
+                          ? Text(
+                              DurationFormatter.formatDuration(
+                                  snapshot.songs[index].duration),
+                              style: MyStyles.appTextStyle,
+                            )
+                          : const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
                     ],
                   ),
                 ),

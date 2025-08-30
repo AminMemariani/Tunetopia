@@ -31,8 +31,36 @@ class Songs with ChangeNotifier {
       _songs.clear();
       _songs.addAll(songsFromDb);
       notifyListeners();
+      
+      // Load metadata for songs that don't have duration
+      await _loadMissingMetadata();
     } catch (e) {
       debugPrint("Error loading songs from database: $e");
+    }
+  }
+
+  // Load metadata for songs that don't have duration information
+  Future<void> _loadMissingMetadata() async {
+    final songsWithoutDuration =
+        _songs.where((song) => song.duration == null).toList();
+
+    for (final song in songsWithoutDuration) {
+      try {
+        await loadImage(song);
+      } catch (e) {
+        debugPrint("Error loading metadata for ${song.songName}: $e");
+      }
+    }
+  }
+
+  // Refresh metadata for all songs (useful for debugging)
+  Future<void> refreshAllMetadata() async {
+    for (final song in _songs) {
+      try {
+        await loadImage(song);
+      } catch (e) {
+        debugPrint("Error refreshing metadata for ${song.songName}: $e");
+      }
     }
   }
 
@@ -79,6 +107,15 @@ class Songs with ChangeNotifier {
       if (newSongs.isNotEmpty) {
         await SongDatabase.addSongs(newSongs);
         notifyListeners();
+        
+        // Load metadata for newly added songs
+        for (final song in newSongs) {
+          try {
+            await loadImage(song);
+          } catch (e) {
+            debugPrint("Error loading metadata for ${song.songName}: $e");
+          }
+        }
       }
     } else {
       debugPrint("Filename not found.");

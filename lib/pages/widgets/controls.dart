@@ -125,7 +125,10 @@ class _ControlsState extends State<Controls> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Text(_formatDuration(_currentPosition)),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(_formatDuration(_currentPosition)),
+            ),
             Expanded(
               child: SliderTheme(
                 data: SliderTheme.of(context).copyWith(

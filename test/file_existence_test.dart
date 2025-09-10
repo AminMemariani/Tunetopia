@@ -1,58 +1,40 @@
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:music_player/models/song.dart';
+import 'test_helpers/mock_data.dart';
 
 void main() {
   group('File Existence Tests', () {
+    setUpAll(() async {
+      await MockData.initialize();
+    });
+
+    tearDownAll(() async {
+      await MockData.cleanup();
+    });
+
     test('should check if file exists', () async {
-      // Create a temporary file for testing
-      final tempDir = Directory.systemTemp;
-      final tempFile = File('${tempDir.path}/test_song.mp3');
+      // Test that the valid song file exists
+      expect(await MockData.validSongFile.exists(), true);
 
-      try {
-        // Create the file
-        await tempFile.writeAsString('test content');
-
-        // Test that the file exists
-        expect(await tempFile.exists(), true);
-
-        // Test with Song model
-        final song = Song(
-          songName: 'Test Song',
-          filePath: tempFile.path,
-        );
-
-        // Check if the song file exists
-        final exists = await tempFile.exists();
-        expect(exists, true);
-      } finally {
-        // Clean up
-        if (await tempFile.exists()) {
-          await tempFile.delete();
-        }
-      }
+      // Check if the song file exists
+      final exists = await MockData.validSongFile.exists();
+      expect(exists, true);
     });
 
     test('should handle non-existent file', () async {
-      final nonExistentFile = File('/path/to/non/existent/file.mp3');
+      final nonExistentFile = File(MockData.nonExistentFilePath);
       expect(await nonExistentFile.exists(), false);
     });
 
     test('should handle null file path', () async {
-      final song = Song(
-        songName: 'Test Song',
-        filePath: null,
-      );
+      final song = MockData.createSongWithNullPath();
 
       // This would be handled by the _checkFileExists method
       expect(song.filePath, null);
     });
 
     test('should handle empty file path', () async {
-      final song = Song(
-        songName: 'Test Song',
-        filePath: '',
-      );
+      final song = MockData.createSongWithEmptyPath();
 
       expect(song.filePath, '');
     });

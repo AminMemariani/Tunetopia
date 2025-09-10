@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:cached_memory_image/cached_memory_image.dart';
@@ -85,6 +86,105 @@ class _SongPageState extends State<SongPage>
     );
   }
 
+  void _showSongInfoDialog() {
+    if (song == null) return;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog.adaptive(
+          title: const Text('Song Information'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildInfoRow('Title', song!.songName),
+                _buildInfoRow('Artist', song!.songArtist ?? 'Unknown Artist'),
+                _buildInfoRow('Album', song!.songAlbum ?? 'Unknown Album'),
+                _buildInfoRow('Duration', _formatDuration(song!.duration)),
+                _buildInfoRow('File Path', song!.filePath ?? 'Unknown'),
+                _buildInfoRow('File Size', _getFileSizeString()),
+                _buildInfoRow(
+                    'Has Cover Art', song!.songImage != null ? 'Yes' : 'No'),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 80,
+            child: Text(
+              '$label:',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatDuration(Duration? duration) {
+    if (duration == null) return 'Unknown';
+
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+
+    if (duration.inHours > 0) {
+      return '${duration.inHours}:$twoDigitMinutes:$twoDigitSeconds';
+    } else {
+      return '$twoDigitMinutes:$twoDigitSeconds';
+    }
+  }
+
+  String _getFileSizeString() {
+    if (song?.filePath == null) return 'Unknown';
+
+    try {
+      final file = File(song!.filePath!);
+      if (file.existsSync()) {
+        final size = file.lengthSync();
+        return _formatFileSize(size);
+      }
+    } catch (e) {
+      debugPrint('Error getting file size: $e');
+    }
+
+    return 'Unknown';
+  }
+
+  String _formatFileSize(int bytes) {
+    if (bytes < 1024) return '$bytes B';
+    if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
+    if (bytes < 1024 * 1024 * 1024)
+      return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
+    return '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(1)} GB';
+  }
+
   @override
   void initState() {
     _controller = AnimationController(
@@ -149,8 +249,34 @@ class _SongPageState extends State<SongPage>
 
   @override
   Widget build(BuildContext context) {
-    song = ModalRoute.of(context)?.settings.arguments as Song;
+    song = ModalRoute.of(context)?.settings.arguments as Song?;
     final size = MediaQuery.of(context).size;
+    
+    // Handle null song
+    if (song == null) {
+      return Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        appBar: MyAppBar(
+          title: "No Song Selected",
+          actions: [
+            IconButton(
+              onPressed: _showSongInfoDialog,
+              icon: const Icon(Icons.info_outline_rounded),
+            )
+          ],
+        ),
+        body: const Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.music_off, size: 64),
+              SizedBox(height: 16),
+              Text('No song selected'),
+            ],
+          ),
+        ),
+      );
+    }
     
     // Show loading or file not found state
     if (_isCheckingFile) {
@@ -158,8 +284,11 @@ class _SongPageState extends State<SongPage>
         backgroundColor: Theme.of(context).colorScheme.surface,
         appBar: MyAppBar(
           title: song?.songName ?? "No Name",
-          actions: const [
-            IconButton(onPressed: null, icon: Icon(Icons.info_outline_rounded))
+          actions: [
+            IconButton(
+              onPressed: _showSongInfoDialog,
+              icon: const Icon(Icons.info_outline_rounded),
+            )
           ],
         ),
         body: const Center(
@@ -181,8 +310,11 @@ class _SongPageState extends State<SongPage>
         backgroundColor: Theme.of(context).colorScheme.surface,
         appBar: MyAppBar(
           title: song?.songName ?? "No Name",
-          actions: const [
-            IconButton(onPressed: null, icon: Icon(Icons.info_outline_rounded))
+          actions: [
+            IconButton(
+              onPressed: _showSongInfoDialog,
+              icon: const Icon(Icons.info_outline_rounded),
+            )
           ],
         ),
         body: Center(
@@ -224,8 +356,8 @@ class _SongPageState extends State<SongPage>
       );
     }
     
-    // Load metadata if not already loading
-    if (!_isLoadingMetadata) {
+    // Load metadata if not already loaded and not currently loading
+    if (!_isLoadingMetadata && song!.songImage == null) {
       _isLoadingMetadata = true;
       context.read<Songs>().loadImage(song!).then((_) {
         if (mounted) {
@@ -240,8 +372,11 @@ class _SongPageState extends State<SongPage>
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: MyAppBar(
         title: song?.songName ?? "No Name",
-        actions: const [
-          IconButton(onPressed: null, icon: Icon(Icons.info_outline_rounded))
+        actions: [
+          IconButton(
+            onPressed: _showSongInfoDialog,
+            icon: const Icon(Icons.info_outline_rounded),
+          )
         ],
       ),
       body: Container(
@@ -284,14 +419,55 @@ class _SongPageState extends State<SongPage>
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(20),
                             child: song?.songImage == null
-                                ? const Icon(Icons.music_note_rounded)
+                                ? Container(
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primaryContainer
+                                          .withAlpha(77),
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: _isLoadingMetadata
+                                        ? const CircularProgressIndicator
+                                            .adaptive()
+                                        : Icon(
+                                            Icons.music_note_rounded,
+                                            size: size.width * 0.15,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onPrimaryContainer,
+                                          ),
+                                  )
                                 : CachedMemoryImage(
-                                    uniqueKey: 'app://image/1',
-                                    errorWidget: const Text('Error'),
-                                    base64: song!.songImage.toString(),
-                                    placeholder:
-                                        const CircularProgressIndicator
-                                        .adaptive(),
+                                    uniqueKey: 'app://image/${song!.filePath}',
+                                    errorWidget: Container(
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primaryContainer
+                                            .withAlpha(77),
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: Icon(
+                                        Icons.music_note_rounded,
+                                        size: size.width * 0.15,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onPrimaryContainer,
+                                      ),
+                                    ),
+                                    base64: base64Encode(song!.songImage!),
+                                    placeholder: Container(
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primaryContainer
+                                            .withAlpha(77),
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: const CircularProgressIndicator
+                                          .adaptive(),
+                                    ),
                                   ),
                           ),
                         ),

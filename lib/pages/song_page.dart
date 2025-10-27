@@ -187,34 +187,39 @@ class _SongPageState extends State<SongPage>
   }
 
   Widget _buildCoverArt(Size size) {
-    if (song?.songImage == null || song!.songImage!.isEmpty) {
-      // Show loading indicator or replacement icon
+    // Check if we have image data
+    final hasImage = song?.songImage != null && song!.songImage!.isNotEmpty;
+
+    // If we have an image, show it immediately
+    if (hasImage) {
+      return CachedMemoryImage(
+        uniqueKey: 'app://image/${song!.filePath}',
+        errorWidget: _buildReplacementIcon(size),
+        base64: base64Encode(song!.songImage!),
+      );
+    }
+
+    // Show loading indicator only if actively loading metadata
+    if (_isLoadingMetadata) {
       return Container(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.primaryContainer.withAlpha(77),
           borderRadius: BorderRadius.circular(20),
         ),
-        child: _isLoadingMetadata
-            ? const CircularProgressIndicator.adaptive()
-            : Icon(
-                Icons.music_note_rounded,
-                size: size.width * 0.15,
-                color: Theme.of(context).colorScheme.onPrimaryContainer,
-              ),
+        child: const CircularProgressIndicator.adaptive(),
       );
     }
-
-    // Show cover art with error fallback
-    return CachedMemoryImage(
-      uniqueKey: 'app://image/${song!.filePath}',
-      errorWidget: _buildReplacementIcon(size),
-      base64: base64Encode(song!.songImage!),
-      placeholder: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primaryContainer.withAlpha(77),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: const CircularProgressIndicator.adaptive(),
+    
+    // Show replacement icon if no image is available and not loading
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.primaryContainer.withAlpha(77),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Icon(
+        Icons.music_note_rounded,
+        size: size.width * 0.15,
+        color: Theme.of(context).colorScheme.onPrimaryContainer,
       ),
     );
   }
@@ -252,6 +257,35 @@ class _SongPageState extends State<SongPage>
 
     super.initState();
   }
+  
+  Future<void> _loadMetadataIfNeeded() async {
+    if (song == null) return;
+
+    // Only load metadata if image is not already loaded
+    if (_fileExists &&
+        !_isLoadingMetadata &&
+        (song!.songImage == null || song!.songImage!.isEmpty)) {
+      setState(() {
+        _isLoadingMetadata = true;
+      });
+
+      try {
+        await context.read<Songs>().loadImage(song!);
+        // Force rebuild after loading image
+        if (mounted) {
+          setState(() {});
+        }
+      } catch (error) {
+        debugPrint('Error loading image metadata: $error');
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isLoadingMetadata = false;
+          });
+        }
+      }
+    }
+  }
 
   Future<void> _checkSongFile() async {
     if (_isCheckingFile) return;
@@ -276,6 +310,9 @@ class _SongPageState extends State<SongPage>
                 _showFileNotFoundDialog();
               }
             });
+          } else if (exists) {
+            // Load metadata after confirming file exists
+            _loadMetadataIfNeeded();
           }
         }
       }
@@ -404,18 +441,6 @@ class _SongPageState extends State<SongPage>
       );
     }
     
-    // Load metadata if not already loaded and not currently loading
-    if (!_isLoadingMetadata && song!.songImage == null) {
-      _isLoadingMetadata = true;
-      context.read<Songs>().loadImage(song!).then((_) {
-        if (mounted) {
-          setState(() {
-            _isLoadingMetadata = false;
-          });
-        }
-      });
-    }
-
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: MyAppBar(

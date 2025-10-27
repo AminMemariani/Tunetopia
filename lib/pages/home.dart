@@ -21,7 +21,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        title: MyStyles.appName,
+        title: Text("Tunetopia", style: MyStyles.getTitleStyle(context)),
         backgroundColor: Theme.of(context).colorScheme.primary,
         elevation: 0,
         actions: [

@@ -10,9 +10,11 @@ class HomeItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<Songs>(builder: (context, snapshot, _) {
-      return ListView.builder(
-        itemCount: snapshot.songs.length,
-        itemBuilder: (BuildContext context, int index) {
+      return Container(
+        color: Theme.of(context).colorScheme.surface,
+        child: ListView.builder(
+          itemCount: snapshot.songs.length,
+          itemBuilder: (BuildContext context, int index) {
           return GestureDetector(
             onTap: () => Navigator.pushNamed(context, "songs",
                 arguments: snapshot.songs[index]),
@@ -48,13 +50,13 @@ class HomeItem extends StatelessWidget {
                     children: [
                       Text(
                         "${index + 1}- ${snapshot.songs[index].songName}",
-                        style: MyStyles.appTextStyle,
+                          style: MyStyles.getAppTextStyle(context),
                       ),
                       snapshot.songs[index].duration != null
                           ? Text(
                               DurationFormatter.formatDuration(
                                   snapshot.songs[index].duration),
-                              style: MyStyles.appTextStyle,
+                                style: MyStyles.getAppTextStyle(context),
                             )
                           : const SizedBox(
                               width: 16,
@@ -68,6 +70,7 @@ class HomeItem extends StatelessWidget {
             ),
           );
         },
+        ),
       );
     });
   }

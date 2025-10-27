@@ -13,14 +13,14 @@ class MyDrawer extends StatelessWidget {
         Container(
           height: 100,
           color: Theme.of(context).colorScheme.primary,
-          child: const DrawerHeader(
-            child: Text("Tunetopia"),
+          child: DrawerHeader(
+            child: Text("Tunetopia", style: MyStyles.getTitleStyle(context)),
           ),
         ),
         ListTile(
-          title: const Text(
+          title: Text(
             'Settings',
-            style: MyStyles.appTextStyle,
+            style: MyStyles.getAppTextStyle(context),
           ),
           leading: const Icon(Icons.settings),
           onTap: () {

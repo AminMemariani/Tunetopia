@@ -19,7 +19,7 @@ class _SettingPageState extends State<SettingPage> {
         backgroundColor: Theme.of(context).colorScheme.primary,
         elevation: 0,
         centerTitle: true,
-        title: const Text("Settings", style: MyStyles.appTextStyle),
+        title: Text("Settings", style: MyStyles.getAppTextStyle(context)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
@@ -28,7 +28,7 @@ class _SettingPageState extends State<SettingPage> {
             itemBuilder: (context, i) => Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text("Dark Mode"),
+                    Text("Dark Mode", style: MyStyles.getAppTextStyle(context)),
                     Switch.adaptive(
                       onChanged: (value) {
                         context.read<ThemeProvider>().toggleTheme();

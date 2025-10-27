@@ -4,6 +4,8 @@ import 'package:music_player/models/song.dart';
 import 'package:music_player/pages/song_page.dart';
 import 'package:music_player/providers/songs.dart';
 import 'package:provider/provider.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:music_player/data/song_database.dart';
 import 'test_helpers/mock_data.dart';
 
 void main() {
@@ -11,15 +13,26 @@ void main() {
     late Songs songsProvider;
 
     setUpAll(() async {
+      // Initialize Hive for testing (without Flutter path provider)
+      Hive.init('test_hive_song_info');
+
+      // Initialize the song database
+      await SongDatabase.initialize();
+      
       await MockData.initialize();
     });
 
     tearDownAll(() async {
       await MockData.cleanup();
+      
+      // Close Hive boxes
+      await Hive.close();
     });
 
-    setUp(() {
+    setUp(() async {
       songsProvider = Songs();
+      // Clear the database to ensure clean state for each test
+      await SongDatabase.clearAllSongs();
     });
 
     // Helper function to create a test widget with song data

@@ -80,7 +80,7 @@ class Songs with ChangeNotifier {
   }
 
   Future<void> addSongs(String files) async {
-    RegExp regex = RegExp(r"PlatformFile\(path ([^,]*)");
+    RegExp regex = RegExp(r"PlatformFile\(path ([^)]*)");
 
     Iterable<Match?> matches = regex.allMatches(files);
 
@@ -130,6 +130,9 @@ class Songs with ChangeNotifier {
       // Extract image if available
       if (song.filePath != "" && metadata.picture?.data != null) {
         song.songImage = metadata.picture!.data;
+      } else {
+        // Ensure songImage is null if no cover art is found
+        song.songImage = null;
       }
       
       // Extract duration from metadata
@@ -143,6 +146,9 @@ class Songs with ChangeNotifier {
     } catch (e) {
       debugPrint("File Path: ${song.filePath}");
       debugPrint("Error loading metadata: $e");
+      // Ensure songImage is null on error
+      song.songImage = null;
+      song.notifyListeners(); // Still notify listeners even on error
     }
   }
 }

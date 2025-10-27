@@ -1,13 +1,30 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:music_player/data/song_database.dart';
 import 'package:music_player/models/song.dart';
 import 'package:music_player/providers/songs.dart';
 
 void main() {
+  setUpAll(() async {
+    // Initialize Hive for testing (without Flutter path provider)
+    Hive.init('test_hive_duration');
+    
+    // Initialize the song database
+    await SongDatabase.initialize();
+  });
+
+  tearDownAll(() async {
+    // Close Hive boxes
+    await Hive.close();
+  });
+
   group('Duration Loading Tests', () {
     late Songs songsProvider;
 
-    setUp(() {
+    setUp(() async {
       songsProvider = Songs();
+      // Clear the database to ensure clean state for each test
+      await SongDatabase.clearAllSongs();
     });
 
     group('Song Model Duration Tests', () {
@@ -144,9 +161,9 @@ void main() {
         const files = 'PlatformFile(path /path/to/song1.mp3)';
         await songsProvider.addSongs(files);
 
-        final foundSong = songsProvider.findByName('song1.mp3)');
-        expect(foundSong?.songName, 'song1.mp3)');
-        expect(foundSong?.filePath, '/path/to/song1.mp3)');
+        final foundSong = songsProvider.findByName('song1.mp3');
+        expect(foundSong?.songName, 'song1.mp3');
+        expect(foundSong?.filePath, '/path/to/song1.mp3');
       });
     });
 

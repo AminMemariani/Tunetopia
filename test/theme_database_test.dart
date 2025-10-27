@@ -1,17 +1,25 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:music_player/data/theme_database.dart';
 
 void main() {
-  group('ThemeDatabase Tests', () {
-    setUpAll(() async {
-      // Initialize the database for testing
-      await ThemeDatabase.initialize();
-    });
+  setUpAll(() async {
+    // Initialize Hive for testing (without Flutter path provider)
+    Hive.init('test_hive_theme');
+    
+    // Initialize the database for testing
+    await ThemeDatabase.initialize();
+  });
 
-    tearDownAll(() async {
-      // Clean up after tests
-      await ThemeDatabase.close();
-    });
+  tearDownAll(() async {
+    // Clean up after tests
+    await ThemeDatabase.close();
+    
+    // Close Hive boxes
+    await Hive.close();
+  });
+
+  group('ThemeDatabase Tests', () {
 
     test('should save and load theme mode correctly', () async {
       // Test saving dark mode

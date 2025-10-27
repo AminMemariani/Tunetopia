@@ -2,6 +2,8 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:music_player/data/song_database.dart';
 import 'package:music_player/models/song.dart';
 import 'package:music_player/providers/songs.dart';
 import 'package:music_player/pages/song_page.dart';
@@ -15,6 +17,12 @@ void main() {
     late Songs songsProvider;
 
     setUpAll(() async {
+      // Initialize Hive for testing (without Flutter path provider)
+      Hive.init('test_hive_metadata');
+      
+      // Initialize the song database
+      await SongDatabase.initialize();
+      
       // Create temporary directory for test files
       tempDir = await Directory.systemTemp.createTemp('metadata_test_');
 
@@ -31,10 +39,15 @@ void main() {
       if (await tempDir.exists()) {
         await tempDir.delete(recursive: true);
       }
+      
+      // Close Hive boxes
+      await Hive.close();
     });
 
-    setUp(() {
+    setUp(() async {
       songsProvider = Songs();
+      // Clear the database to ensure clean state for each test
+      await SongDatabase.clearAllSongs();
     });
 
     group('Song Model Metadata Tests', () {

@@ -180,9 +180,57 @@ class _SongPageState extends State<SongPage>
   String _formatFileSize(int bytes) {
     if (bytes < 1024) return '$bytes B';
     if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
-    if (bytes < 1024 * 1024 * 1024)
+    if (bytes < 1024 * 1024 * 1024) {
       return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
+    }
     return '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(1)} GB';
+  }
+
+  Widget _buildCoverArt(Size size) {
+    if (song?.songImage == null || song!.songImage!.isEmpty) {
+      // Show loading indicator or replacement icon
+      return Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.primaryContainer.withAlpha(77),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: _isLoadingMetadata
+            ? const CircularProgressIndicator.adaptive()
+            : Icon(
+                Icons.music_note_rounded,
+                size: size.width * 0.15,
+                color: Theme.of(context).colorScheme.onPrimaryContainer,
+              ),
+      );
+    }
+
+    // Show cover art with error fallback
+    return CachedMemoryImage(
+      uniqueKey: 'app://image/${song!.filePath}',
+      errorWidget: _buildReplacementIcon(size),
+      base64: base64Encode(song!.songImage!),
+      placeholder: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.primaryContainer.withAlpha(77),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: const CircularProgressIndicator.adaptive(),
+      ),
+    );
+  }
+
+  Widget _buildReplacementIcon(Size size) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.primaryContainer.withAlpha(77),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Icon(
+        Icons.music_note_rounded,
+        size: size.width * 0.15,
+        color: Theme.of(context).colorScheme.onPrimaryContainer,
+      ),
+    );
   }
 
   @override
@@ -418,57 +466,7 @@ class _SongPageState extends State<SongPage>
                           ),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(20),
-                            child: song?.songImage == null
-                                ? Container(
-                                    decoration: BoxDecoration(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primaryContainer
-                                          .withAlpha(77),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: _isLoadingMetadata
-                                        ? const CircularProgressIndicator
-                                            .adaptive()
-                                        : Icon(
-                                            Icons.music_note_rounded,
-                                            size: size.width * 0.15,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onPrimaryContainer,
-                                          ),
-                                  )
-                                : CachedMemoryImage(
-                                    uniqueKey: 'app://image/${song!.filePath}',
-                                    errorWidget: Container(
-                                      decoration: BoxDecoration(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primaryContainer
-                                            .withAlpha(77),
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      child: Icon(
-                                        Icons.music_note_rounded,
-                                        size: size.width * 0.15,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimaryContainer,
-                                      ),
-                                    ),
-                                    base64: base64Encode(song!.songImage!),
-                                    placeholder: Container(
-                                      decoration: BoxDecoration(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primaryContainer
-                                            .withAlpha(77),
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      child: const CircularProgressIndicator
-                                          .adaptive(),
-                                    ),
-                                  ),
+                            child: _buildCoverArt(size),
                           ),
                         ),
                       ),

@@ -1,10 +1,25 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:music_player/data/song_database.dart';
 import 'package:music_player/models/song.dart';
 import 'package:music_player/providers/songs.dart';
 
 void main() {
+  setUpAll(() async {
+    // Initialize Hive for testing (without Flutter path provider)
+    Hive.init('test_hive_music');
+    
+    // Initialize the song database
+    await SongDatabase.initialize();
+  });
+
+  tearDownAll(() async {
+    // Close Hive boxes
+    await Hive.close();
+  });
+
   group('Music File Validation Tests', () {
     late Directory tempDir;
     late File validMp3File;
@@ -21,7 +36,7 @@ void main() {
 
       // Create an invalid file (text file with .mp3 extension)
       invalidFile = File('${tempDir.path}/invalid.mp3');
-      await invalidFile.writeAsString('This is not a music file');
+      await invalidFile.writeAsString('This is not a music file' * 50); // Make it larger than 1KB
 
       // Create an empty file
       emptyFile = File('${tempDir.path}/empty.mp3');
@@ -118,8 +133,8 @@ void main() {
           filePath: null,
         );
 
-        expect(await _checkFileExists(song.filePath!), false);
-        expect(await _isFileAccessible(song.filePath!), false);
+        expect(await _checkFileExists(song.filePath ?? ''), false);
+        expect(await _isFileAccessible(song.filePath ?? ''), false);
       });
 
       test('should handle empty file path', () async {
@@ -244,8 +259,10 @@ void main() {
     group('Songs Provider Integration', () {
       late Songs songsProvider;
 
-      setUp(() {
+      setUp(() async {
         songsProvider = Songs();
+        // Clear the database to ensure clean state for each test
+        await SongDatabase.clearAllSongs();
       });
 
       test('should add valid music files', () async {
@@ -375,8 +392,10 @@ Future<bool> _isValidMusicFile(Song song) async {
 
 // Helper function to create a mock MP3 header
 Uint8List _createMockMp3Header() {
-  // Create a minimal MP3 file with ID3 tag
-  final header = Uint8List(10);
+  // Create a minimal MP3 file with ID3 tag (at least 1KB to pass size validation)
+  final header = Uint8List(1024); // 1KB minimum
+  
+  // ID3 tag header
   header[0] = 0x49; // 'I'
   header[1] = 0x44; // 'D'
   header[2] = 0x33; // '3'
@@ -387,6 +406,11 @@ Uint8List _createMockMp3Header() {
   header[7] = 0x00;
   header[8] = 0x00;
   header[9] = 0x00;
+
+  // Fill the rest with dummy data to reach 1KB
+  for (int i = 10; i < 1024; i++) {
+    header[i] = 0x00;
+  }
 
   return header;
 }

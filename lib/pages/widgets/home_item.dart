@@ -48,10 +48,14 @@ class HomeItem extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        "${index + 1}- ${snapshot.songs[index].songName}",
+                        Expanded(
+                          child: Text(
+                            "${index + 1}- ${snapshot.songs[index].songName}",
                           style: MyStyles.getAppTextStyle(context),
-                      ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
                       snapshot.songs[index].duration != null
                           ? Text(
                               DurationFormatter.formatDuration(

@@ -1,12 +1,18 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:metadata_god/metadata_god.dart';
 import 'package:music_player/models/song.dart';
 import 'package:music_player/data/song_database.dart';
 
+enum PlayMode { shuffle, repeatOne, repeatAll }
+
 class Songs with ChangeNotifier {
   final List<Song> _songs = [];
   bool _isInitialized = false;
+  PlayMode _playMode = PlayMode.shuffle;
+  int _currentIndex = 0;
+  List<int> _shuffledIndices = [];
 
   String _sanitizeFilePath(String input) {
     final marker = ', name:';
@@ -32,6 +38,90 @@ class Songs with ChangeNotifier {
 
   List<Song> get songs {
     return [..._songs];
+  }
+
+  PlayMode get playMode => _playMode;
+
+  int get currentIndex => _currentIndex;
+
+  Song? get currentSong {
+    if (_songs.isEmpty) return null;
+    if (_playMode == PlayMode.shuffle && _shuffledIndices.isNotEmpty) {
+      return _songs[_shuffledIndices[_currentIndex]];
+    }
+    return _songs[_currentIndex];
+  }
+
+  void setPlayMode(PlayMode mode) {
+    _playMode = mode;
+    if (mode == PlayMode.shuffle) {
+      _generateShuffledIndices();
+    }
+    notifyListeners();
+  }
+
+  void _generateShuffledIndices() {
+    _shuffledIndices = List.generate(_songs.length, (index) => index);
+    _shuffledIndices.shuffle(Random());
+    _currentIndex = 0;
+  }
+
+  Song? getNextSong() {
+    if (_songs.isEmpty) return null;
+
+    switch (_playMode) {
+      case PlayMode.shuffle:
+        if (_shuffledIndices.isEmpty) {
+          _generateShuffledIndices();
+        }
+        _currentIndex = (_currentIndex + 1) % _shuffledIndices.length;
+        notifyListeners();
+        return _songs[_shuffledIndices[_currentIndex]];
+
+      case PlayMode.repeatOne:
+        return currentSong; // Stay on same song
+
+      case PlayMode.repeatAll:
+        _currentIndex = (_currentIndex + 1) % _songs.length;
+        notifyListeners();
+        return _songs[_currentIndex];
+    }
+  }
+
+  Song? getPreviousSong() {
+    if (_songs.isEmpty) return null;
+
+    switch (_playMode) {
+      case PlayMode.shuffle:
+        if (_shuffledIndices.isEmpty) {
+          _generateShuffledIndices();
+        }
+        _currentIndex = (_currentIndex - 1 + _shuffledIndices.length) %
+            _shuffledIndices.length;
+        notifyListeners();
+        return _songs[_shuffledIndices[_currentIndex]];
+
+      case PlayMode.repeatOne:
+        return currentSong; // Stay on same song
+
+      case PlayMode.repeatAll:
+        _currentIndex = (_currentIndex - 1 + _songs.length) % _songs.length;
+        notifyListeners();
+        return _songs[_currentIndex];
+    }
+  }
+
+  void setCurrentSong(Song song) {
+    final index = _songs.indexOf(song);
+    if (index != -1) {
+      _currentIndex = index;
+      if (_playMode == PlayMode.shuffle) {
+        _generateShuffledIndices();
+        // Find the position of current song in shuffled list
+        _currentIndex = _shuffledIndices.indexOf(index);
+      }
+      notifyListeners();
+    }
   }
 
   // Load songs from the database

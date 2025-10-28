@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:music_player/utils/duration_formatter.dart';
+import 'package:music_player/providers/songs.dart';
+import 'package:music_player/models/song.dart';
+import 'package:provider/provider.dart';
 import 'dart:async';
 
 class Controls extends StatefulWidget {
   final Duration? duration;
   final String? filePath;
+  final ValueChanged<PlayMode>? onPlayModeChanged;
 
-  const Controls({super.key, this.duration, this.filePath});
+  const Controls(
+      {super.key, this.duration, this.filePath, this.onPlayModeChanged});
 
   @override
   State<Controls> createState() => _ControlsState();
@@ -22,6 +27,7 @@ class _ControlsState extends State<Controls> {
   Timer? _positionTimer;
   StreamSubscription<Duration>? _positionSubscription;
   StreamSubscription<Duration>? _durationSubscription;
+  PlayMode _playMode = PlayMode.shuffle;
 
   @override
   void initState() {
@@ -68,6 +74,42 @@ class _ControlsState extends State<Controls> {
         });
       }
     });
+
+    // Listen to player completion
+    _audioPlayer!.onPlayerComplete.listen((_) {
+      _handleSongCompletion();
+    });
+  }
+
+  void _handleSongCompletion() {
+    final songsProvider = context.read<Songs>();
+
+    switch (_playMode) {
+      case PlayMode.repeatOne:
+        // Restart the same song
+        _restartCurrentSong();
+        break;
+      case PlayMode.shuffle:
+      case PlayMode.repeatAll:
+        // Move to next song
+        final nextSong = songsProvider.getNextSong();
+        if (nextSong != null) {
+          _playNextSong(nextSong);
+        }
+        break;
+    }
+  }
+
+  void _restartCurrentSong() {
+    if (_audioPlayer != null && widget.filePath != null) {
+      _audioPlayer!.seek(Duration.zero);
+      _audioPlayer!.resume();
+    }
+  }
+
+  void _playNextSong(Song nextSong) {
+    // Navigate to the next song
+    Navigator.pushReplacementNamed(context, "songs", arguments: nextSong);
   }
 
   Future<void> _playPause() async {
@@ -87,6 +129,44 @@ class _ControlsState extends State<Controls> {
       }
     } catch (e) {
       debugPrint('Error playing audio: $e');
+    }
+  }
+
+  Future<void> _skipNext() async {
+    final songsProvider = context.read<Songs>();
+
+    switch (_playMode) {
+      case PlayMode.repeatOne:
+        // In repeat one mode, skip next should restart the current song
+        _restartCurrentSong();
+        break;
+      case PlayMode.shuffle:
+      case PlayMode.repeatAll:
+        // Move to next song
+        final nextSong = songsProvider.getNextSong();
+        if (nextSong != null) {
+          _playNextSong(nextSong);
+        }
+        break;
+    }
+  }
+
+  Future<void> _skipPrevious() async {
+    final songsProvider = context.read<Songs>();
+
+    switch (_playMode) {
+      case PlayMode.repeatOne:
+        // In repeat one mode, skip previous should restart the current song
+        _restartCurrentSong();
+        break;
+      case PlayMode.shuffle:
+      case PlayMode.repeatAll:
+        // Move to previous song
+        final previousSong = songsProvider.getPreviousSong();
+        if (previousSong != null) {
+          _playNextSong(previousSong);
+        }
+        break;
     }
   }
 
@@ -115,6 +195,25 @@ class _ControlsState extends State<Controls> {
 
   String _formatDuration(Duration? duration) {
     return DurationFormatter.formatDuration(duration);
+  }
+
+  void _cyclePlayMode() {
+    setState(() {
+      switch (_playMode) {
+        case PlayMode.shuffle:
+          _playMode = PlayMode.repeatOne;
+          break;
+        case PlayMode.repeatOne:
+          _playMode = PlayMode.repeatAll;
+          break;
+        case PlayMode.repeatAll:
+          _playMode = PlayMode.shuffle;
+          break;
+      }
+    });
+    // Update the Songs provider with the new play mode
+    context.read<Songs>().setPlayMode(_playMode);
+    widget.onPlayModeChanged?.call(_playMode);
   }
 
   @override
@@ -166,12 +265,28 @@ class _ControlsState extends State<Controls> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             IconButton(
+              icon: Icon(
+                _playMode == PlayMode.shuffle
+                    ? Icons.shuffle_rounded
+                    : _playMode == PlayMode.repeatOne
+                        ? Icons.repeat_one_rounded
+                        : Icons.repeat_rounded,
+              ),
+              color: Theme.of(context).colorScheme.tertiary,
+              onPressed: _cyclePlayMode,
+              iconSize: 32,
+              tooltip: _playMode == PlayMode.shuffle
+                  ? 'Shuffle'
+                  : _playMode == PlayMode.repeatOne
+                      ? 'Repeat one'
+                      : 'Repeat all',
+            ),
+            IconButton(
               icon: const Icon(Icons.skip_previous_rounded),
               color: Theme.of(context).colorScheme.tertiary,
-              onPressed: () {
-                _stop();
-              },
+              onPressed: _skipPrevious,
               iconSize: 40,
+              tooltip: 'Previous song',
             ),
             CircleAvatar(
               backgroundColor: Theme.of(context).colorScheme.primary,
@@ -190,12 +305,20 @@ class _ControlsState extends State<Controls> {
                     ),
             ),
             IconButton(
+              icon: const Icon(Icons.skip_next_rounded),
+              color: Theme.of(context).colorScheme.tertiary,
+              onPressed: _skipNext,
+              iconSize: 40,
+              tooltip: 'Next song',
+            ),
+            IconButton(
               icon: const Icon(Icons.stop_rounded),
               color: Theme.of(context).colorScheme.tertiary,
               onPressed: () {
                 _stop();
               },
-              iconSize: 40,
+              iconSize: 32,
+              tooltip: 'Stop',
             ),
           ],
         ),

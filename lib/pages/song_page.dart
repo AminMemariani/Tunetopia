@@ -253,6 +253,11 @@ class _SongPageState extends State<SongPage>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _asyncMethod();
       _checkSongFile();
+      // Set the current song in the Songs provider
+      final song = ModalRoute.of(context)?.settings.arguments as Song?;
+      if (song != null) {
+        context.read<Songs>().setCurrentSong(song);
+      }
     });
 
     super.initState();

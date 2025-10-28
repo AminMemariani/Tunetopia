@@ -33,6 +33,24 @@ class _ControlsState extends State<Controls> {
   void initState() {
     super.initState();
     _initializeAudioPlayer();
+    // Initialize play mode from the Songs provider
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final songsProvider = context.read<Songs>();
+      setState(() {
+        _playMode = songsProvider.playMode;
+      });
+      // Auto-play by default after a short delay
+      Future.delayed(const Duration(milliseconds: 500), () {
+        _autoPlay();
+      });
+    });
+  }
+
+  void _autoPlay() {
+    if (_audioPlayer != null && widget.filePath != null && !_isPlaying) {
+      debugPrint('Auto-playing song: ${widget.filePath}');
+      _playPause();
+    }
   }
 
   @override
@@ -218,111 +236,127 @@ class _ControlsState extends State<Controls> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    return Consumer<Songs>(
+      builder: (context, songsProvider, child) {
+        // Update local play mode when provider changes
+        if (_playMode != songsProvider.playMode) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              setState(() {
+                _playMode = songsProvider.playMode;
+              });
+            }
+          });
+        }
+        
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(_formatDuration(_currentPosition)),
-            ),
-            Expanded(
-              child: SliderTheme(
-                data: SliderTheme.of(context).copyWith(
-                  activeTrackColor: Theme.of(context).colorScheme.primary,
-                  inactiveTrackColor: Theme.of(context).colorScheme.secondary,
-                  trackShape: const RoundedRectSliderTrackShape(),
-                  overlayShape: SliderComponentShape.noOverlay,
-                  trackHeight: 3.0,
-                  thumbColor: Theme.of(context).colorScheme.primary,
-                  thumbShape: const RoundSliderThumbShape(
-                      enabledThumbRadius: 7.0, elevation: 0),
-                  overlayColor: Theme.of(context).colorScheme.secondary,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(_formatDuration(_currentPosition)),
                 ),
-                child: Slider(
-                    min: 0.0,
-                    max: _totalDuration.inSeconds.toDouble() > 0
-                        ? _totalDuration.inSeconds.toDouble()
-                        : (widget.duration?.inSeconds.toDouble() ?? 100.0),
-                    value: _currentPosition.inSeconds.toDouble(),
-                    onChanged: (double value) {
-                      final newPosition = Duration(seconds: value.toInt());
-                      _seekTo(newPosition);
-                    }),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(_formatDuration(_totalDuration.inSeconds > 0
-                  ? _totalDuration
-                  : widget.duration)),
-            ),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            IconButton(
-              icon: Icon(
-                _playMode == PlayMode.shuffle
-                    ? Icons.shuffle_rounded
-                    : _playMode == PlayMode.repeatOne
-                        ? Icons.repeat_one_rounded
-                        : Icons.repeat_rounded,
-              ),
-              color: Theme.of(context).colorScheme.tertiary,
-              onPressed: _cyclePlayMode,
-              iconSize: 32,
-              tooltip: _playMode == PlayMode.shuffle
-                  ? 'Shuffle'
-                  : _playMode == PlayMode.repeatOne
-                      ? 'Repeat one'
-                      : 'Repeat all',
-            ),
-            IconButton(
-              icon: const Icon(Icons.skip_previous_rounded),
-              color: Theme.of(context).colorScheme.tertiary,
-              onPressed: _skipPrevious,
-              iconSize: 40,
-              tooltip: 'Previous song',
-            ),
-            CircleAvatar(
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              radius: 30,
-              child: _isLoading
-                  ? const CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 2,
-                    )
-                  : IconButton(
-                      icon: _isPlaying
-                          ? const Icon(Icons.pause_rounded)
-                          : const Icon(Icons.play_arrow_rounded),
-                      onPressed: _playPause,
-                      iconSize: 40,
+                Expanded(
+                  child: SliderTheme(
+                    data: SliderTheme.of(context).copyWith(
+                      activeTrackColor: Theme.of(context).colorScheme.primary,
+                      inactiveTrackColor:
+                          Theme.of(context).colorScheme.secondary,
+                      trackShape: const RoundedRectSliderTrackShape(),
+                      overlayShape: SliderComponentShape.noOverlay,
+                      trackHeight: 3.0,
+                      thumbColor: Theme.of(context).colorScheme.primary,
+                      thumbShape: const RoundSliderThumbShape(
+                          enabledThumbRadius: 7.0, elevation: 0),
+                      overlayColor: Theme.of(context).colorScheme.secondary,
                     ),
+                    child: Slider(
+                        min: 0.0,
+                        max: _totalDuration.inSeconds.toDouble() > 0
+                            ? _totalDuration.inSeconds.toDouble()
+                            : (widget.duration?.inSeconds.toDouble() ?? 100.0),
+                        value: _currentPosition.inSeconds.toDouble(),
+                        onChanged: (double value) {
+                          final newPosition = Duration(seconds: value.toInt());
+                          _seekTo(newPosition);
+                        }),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(_formatDuration(_totalDuration.inSeconds > 0
+                      ? _totalDuration
+                      : widget.duration)),
+                ),
+              ],
             ),
-            IconButton(
-              icon: const Icon(Icons.skip_next_rounded),
-              color: Theme.of(context).colorScheme.tertiary,
-              onPressed: _skipNext,
-              iconSize: 40,
-              tooltip: 'Next song',
-            ),
-            IconButton(
-              icon: const Icon(Icons.stop_rounded),
-              color: Theme.of(context).colorScheme.tertiary,
-              onPressed: () {
-                _stop();
-              },
-              iconSize: 32,
-              tooltip: 'Stop',
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                IconButton(
+                  icon: Icon(
+                    _playMode == PlayMode.shuffle
+                        ? Icons.shuffle_rounded
+                        : _playMode == PlayMode.repeatOne
+                            ? Icons.repeat_one_rounded
+                            : Icons.repeat_rounded,
+                  ),
+                  color: Theme.of(context).colorScheme.tertiary,
+                  onPressed: _cyclePlayMode,
+                  iconSize: 32,
+                  tooltip: _playMode == PlayMode.shuffle
+                      ? 'Shuffle'
+                      : _playMode == PlayMode.repeatOne
+                          ? 'Repeat one'
+                          : 'Repeat all',
+                ),
+                IconButton(
+                  icon: const Icon(Icons.skip_previous_rounded),
+                  color: Theme.of(context).colorScheme.tertiary,
+                  onPressed: _skipPrevious,
+                  iconSize: 40,
+                  tooltip: 'Previous song',
+                ),
+                CircleAvatar(
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  radius: 30,
+                  child: _isLoading
+                      ? const CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        )
+                      : IconButton(
+                          icon: _isPlaying
+                              ? const Icon(Icons.pause_rounded)
+                              : const Icon(Icons.play_arrow_rounded),
+                          onPressed: _playPause,
+                          iconSize: 40,
+                        ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.skip_next_rounded),
+                  color: Theme.of(context).colorScheme.tertiary,
+                  onPressed: _skipNext,
+                  iconSize: 40,
+                  tooltip: 'Next song',
+                ),
+                IconButton(
+                  icon: const Icon(Icons.stop_rounded),
+                  color: Theme.of(context).colorScheme.tertiary,
+                  onPressed: () {
+                    _stop();
+                  },
+                  iconSize: 32,
+                  tooltip: 'Stop',
+                ),
+              ],
             ),
           ],
-        ),
-      ],
+        );
+      },
     );
   }
 }

@@ -139,8 +139,11 @@ void main() {
         );
 
         await tester.pumpWidget(createTestWidget(song));
+        
+        // Allow async operations to start
+        await tester.pump();
 
-        // Should find loading indicator initially
+        // Should find loading indicator when metadata is loading
         expect(find.byType(CircularProgressIndicator), findsOneWidget);
       });
 
@@ -232,8 +235,11 @@ void main() {
         );
 
         await tester.pumpWidget(createTestWidget(song));
+        
+        // Allow async operations to start
+        await tester.pump();
 
-        // Should show loading indicator initially
+        // Should show loading indicator while checking file existence
         expect(find.byType(CircularProgressIndicator), findsOneWidget);
       });
 
@@ -245,6 +251,9 @@ void main() {
         );
 
         await tester.pumpWidget(createTestWidget(song));
+        
+        // Allow async operations to start
+        await tester.pump();
 
         // Initially should show loading
         expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -345,6 +354,9 @@ void main() {
         );
 
         await tester.pumpWidget(createTestWidget(song));
+        
+        // Allow async operations to start
+        await tester.pump();
 
         // Should show loading indicator since file existence check is not completing
         expect(find.byType(CircularProgressIndicator), findsOneWidget);

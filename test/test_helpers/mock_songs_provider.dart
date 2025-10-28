@@ -6,8 +6,8 @@ class MockSongsProvider extends Songs {
   Future<void> loadImage(Song song) async {
     // Mock implementation that doesn't call the real metadata loading
     // This prevents the flutter_rust_bridge error in tests
-    // Complete immediately to avoid loading states in tests
-    // Don't actually load metadata, just simulate completion
+    // Add a small delay to simulate loading for tests
+    await Future.delayed(const Duration(milliseconds: 100));
   }
 
   @override

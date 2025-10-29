@@ -31,37 +31,18 @@ class MyDrawer extends StatelessWidget {
         ),
         ListTile(
           title: Text(
-            'Clean Up Missing Files',
+            'Sync files',
             style: MyStyles.getAppTextStyle(context),
           ),
-          leading: const Icon(Icons.cleaning_services),
+          leading: const Icon(Icons.sync),
           onTap: () async {
             Navigator.of(context).pop(); // Close drawer
-            await context.read<Songs>().cleanupMissingFiles();
+            final removed = await context.read<Songs>().cleanupMissingFiles();
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Missing files have been cleaned up'),
-                  duration: Duration(seconds: 2),
-                ),
-              );
-            }
-          },
-        ),
-        ListTile(
-          title: Text(
-            'Clear All Songs (Debug)',
-            style: MyStyles.getAppTextStyle(context),
-          ),
-          leading: const Icon(Icons.delete_forever),
-          onTap: () async {
-            Navigator.of(context).pop(); // Close drawer
-            await context.read<Songs>().clearAllSongs();
-            if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('All songs cleared from database'),
-                  duration: Duration(seconds: 2),
+                SnackBar(
+                  content: Text('Sync complete. Removed $removed missing file(s).'),
+                  duration: const Duration(seconds: 2),
                 ),
               );
             }

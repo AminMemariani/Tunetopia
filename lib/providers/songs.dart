@@ -177,7 +177,7 @@ class Songs with ChangeNotifier {
   }
 
   // Clean up songs that no longer exist on the device
-  Future<void> cleanupMissingFiles() async {
+  Future<int> cleanupMissingFiles() async {
     List<Song> songsToRemove = [];
 
     for (final song in _songs) {
@@ -220,6 +220,7 @@ class Songs with ChangeNotifier {
     if (songsToRemove.isNotEmpty) {
       debugPrint("Removed ${songsToRemove.length} missing songs from library");
     }
+    return songsToRemove.length;
   }
 
   // Remove a song from the library (both memory and database)
